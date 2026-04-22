@@ -1,8 +1,8 @@
 "use server";
 
 import { getSupabaseServerClient } from "@/lib/supabase/server";
-import { getRandomQuestions } from "@/lib/supabase/queries";
-import type { CivicsFormat, SessionMode } from "@/types/supabase";
+import { getRandomQuestions, getQuestionsByCategory } from "@/lib/supabase/queries";
+import type { CivicsFormat, CivicsCategory, SessionMode } from "@/types/supabase";
 
 export type SessionStartResult =
   | { sessionId: string; questions: Awaited<ReturnType<typeof getRandomQuestions>>["data"] }
@@ -23,6 +23,31 @@ export async function startSession(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: session, error: sessionError } = await (supabase.from("sessions") as any)
     .insert({ user_id: user.id, mode, format })
+    .select("id")
+    .single();
+
+  if (sessionError || !session) return { error: sessionError?.message ?? "Failed to create session" };
+
+  return { sessionId: (session as { id: string }).id, questions };
+}
+
+/** Creates a practice session for a specific category. */
+export async function startPracticeByCategory(
+  category: CivicsCategory,
+  format: CivicsFormat = "standard"
+): Promise<SessionStartResult> {
+  const supabase = await getSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Unauthorized" };
+
+  const { data: questions, error } = await getQuestionsByCategory(format, category);
+  if (error || !questions || questions.length === 0) {
+    return { error: error ?? "No questions found for this category" };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: session, error: sessionError } = await (supabase.from("sessions") as any)
+    .insert({ user_id: user.id, mode: "practice", format })
     .select("id")
     .single();
 

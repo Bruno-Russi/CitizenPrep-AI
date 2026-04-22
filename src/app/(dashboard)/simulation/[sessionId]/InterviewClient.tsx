@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Volume2, RotateCcw, X, CheckCircle, XCircle, RefreshCw } from "lucide-react";
+import { Volume2, X, CheckCircle, XCircle, RefreshCw } from "lucide-react";
 import { OfficerAvatar } from "@/components/interview/officer-avatar";
 import { AudioWaveform } from "@/components/interview/audio-waveform";
 import { RecordButton } from "@/components/interview/record-button";
@@ -29,20 +29,22 @@ export function InterviewClient({ sessionId, questions, mode = "simulation" }: P
     answers,
     recorderState,
     startQuestion,
-    submitAnswer,
+    startRecording,
+    stopRecording,
     next,
     abort,
   } = useInterviewSession(sessionId, questions, mode);
 
-  // Auto-start whenever a new question becomes active
+  // Auto-start audio when a new question becomes active, or when practice mode
+  // repeats the same question (phase resets to idle without index changing)
   useEffect(() => {
     if (questionState.phase === "idle") {
       startQuestion();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questionIndex]);
+  }, [questionIndex, questionState.phase]);
 
-  // Redirect to result page when session is complete
+  // Redirect to result when session is complete
   useEffect(() => {
     if (questionState.phase === "complete") {
       router.push(`/simulation/${sessionId}/result?score=${score}&total=${totalQuestions}`);
@@ -53,12 +55,12 @@ export function InterviewClient({ sessionId, questions, mode = "simulation" }: P
   const isRecording = questionState.phase === "recording";
   const isProcessing = questionState.phase === "processing";
   const isResult = questionState.phase === "result";
-
-  const answeredCount = answers.length;
+  const isAwaitingRecord = questionState.phase === "awaiting_record";
   const isPractice = mode === "practice";
-
-  // In practice mode, show total correct out of questions answered (not index)
   const isLastQuestion = questionIndex + 1 >= totalQuestions;
+
+  const recordState = isProcessing ? "processing" : isRecording ? "recording" : "idle";
+  const showRecordButton = !isResult && (isAwaitingRecord || isRecording || isProcessing);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#0A0F1E" }}>
@@ -69,35 +71,36 @@ export function InterviewClient({ sessionId, questions, mode = "simulation" }: P
       >
         <button
           onClick={() => { abort(); router.push("/simulation"); }}
-          className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors"
+          className="w-9 h-9 rounded-lg flex items-center justify-center"
           style={{ background: "rgba(255,255,255,0.04)" }}
-          aria-label="Sair da simulação"
+          aria-label="Sair"
         >
           <X size={18} className="text-white/50" />
         </button>
 
         <SessionProgress
-          current={answeredCount}
+          current={answers.length}
           total={totalQuestions}
           correctCount={score}
         />
 
         <button
           onClick={startQuestion}
-          className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors"
+          disabled={isSpeaking || isProcessing || isRecording}
+          className="w-9 h-9 rounded-lg flex items-center justify-center"
           style={{ background: "rgba(255,255,255,0.04)" }}
           aria-label="Repetir pergunta"
-          disabled={isSpeaking || isProcessing || recorderState === "recording"}
         >
           <Volume2
             size={18}
-            className={isRecording ? "text-blue-400" : "text-white/20"}
+            className={(!isSpeaking && !isProcessing && !isRecording) ? "text-blue-400" : "text-white/20"}
           />
         </button>
       </header>
 
       {/* Body */}
       <div className="flex-1 flex flex-col items-center justify-between px-4 py-6 gap-6 max-w-md mx-auto w-full">
+
         {/* Officer + question */}
         <div className="flex flex-col items-center gap-4 w-full">
           <OfficerAvatar name="Agente James" isSpeaking={isSpeaking} />
@@ -117,14 +120,15 @@ export function InterviewClient({ sessionId, questions, mode = "simulation" }: P
             <>
               <TranscriptBubble transcript={questionState.transcript} />
 
-              {/* Feedback card */}
               <div
                 className="rounded-xl p-4 space-y-2"
                 style={{
                   background: questionState.evaluation.correct
                     ? "rgba(16,185,129,0.1)"
                     : "rgba(239,68,68,0.08)",
-                  border: `1px solid ${questionState.evaluation.correct ? "rgba(16,185,129,0.25)" : "rgba(239,68,68,0.2)"}`,
+                  border: `1px solid ${questionState.evaluation.correct
+                    ? "rgba(16,185,129,0.25)"
+                    : "rgba(239,68,68,0.2)"}`,
                 }}
               >
                 <div className="flex items-center gap-2">
@@ -153,42 +157,24 @@ export function InterviewClient({ sessionId, questions, mode = "simulation" }: P
 
               <button
                 onClick={() => next()}
-                className="w-full h-12 rounded-xl font-semibold text-sm text-white transition-all flex items-center justify-center gap-2"
+                className="w-full h-12 rounded-xl font-semibold text-sm text-white flex items-center justify-center gap-2"
                 style={{
                   background: "linear-gradient(135deg, #3B82F6, #2563EB)",
                   boxShadow: "0 1px 20px rgba(59,130,246,0.3)",
                 }}
               >
-                {isPractice && !questionState.evaluation.correct ? (
-                  <><RefreshCw size={15} /> Repetir pergunta</>
-                ) : isLastQuestion ? (
-                  "Ver resultado"
-                ) : (
-                  "Próxima pergunta →"
-                )}
+                {isPractice && !questionState.evaluation.correct
+                  ? <><RefreshCw size={15} /> Repetir pergunta</>
+                  : isLastQuestion
+                  ? "Ver resultado"
+                  : "Próxima pergunta →"
+                }
               </button>
             </>
           )}
 
-          {isRecording && (
-            <div className="flex justify-end pr-1">
-              <div
-                className="rounded-2xl rounded-br-sm px-4 py-3"
-                style={{ background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.2)" }}
-              >
-                <AudioWaveform isActive variant="user" />
-              </div>
-            </div>
-          )}
-
           {!isResult && (
             <div className="flex flex-col items-center gap-2">
-              {(isRecording || isProcessing) && (
-                <RecordButton
-                  state={isProcessing ? "processing" : "recording"}
-                  onClick={isRecording ? submitAnswer : () => {}}
-                />
-              )}
               {(isSpeaking || questionState.phase === "idle") && (
                 <div className="flex flex-col items-center gap-2 py-4">
                   <div
@@ -202,19 +188,28 @@ export function InterviewClient({ sessionId, questions, mode = "simulation" }: P
                   </p>
                 </div>
               )}
+
+              {isRecording && (
+                <div className="flex justify-end pr-1 w-full">
+                  <div
+                    className="rounded-2xl rounded-br-sm px-4 py-3"
+                    style={{ background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.2)" }}
+                  >
+                    <AudioWaveform isActive variant="user" />
+                  </div>
+                </div>
+              )}
+
+              {showRecordButton && (
+                <RecordButton
+                  state={recordState}
+                  onPressStart={startRecording}
+                  onPressEnd={stopRecording}
+                />
+              )}
             </div>
           )}
         </div>
-
-        {isRecording && (
-          <button
-            onClick={submitAnswer}
-            className="flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 transition-colors"
-          >
-            <RotateCcw size={12} />
-            Enviar resposta
-          </button>
-        )}
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ export type SessionMode = "simulation" | "practice";
 export type QuestionState =
   | { phase: "idle" }
   | { phase: "playing_question" }
+  | { phase: "awaiting_record" }
   | { phase: "recording" }
   | { phase: "processing" }
   | { phase: "result"; transcript: string; evaluation: EvaluationResult }
@@ -38,6 +39,7 @@ export function useInterviewSession(
 
   const currentQuestion = questions[index] ?? null;
 
+  /** Plays the question audio then waits for user to press-and-hold to record. */
   const startQuestion = useCallback(async () => {
     if (!currentQuestion || questionState.phase !== "idle") return;
 
@@ -52,12 +54,18 @@ export function useInterviewSession(
     }
 
     if (abortRef.current) return;
+    setQuestionState({ phase: "awaiting_record" });
+  }, [currentQuestion, questionState.phase, playQuestionAudio]);
 
+  /** Called when user presses the record button. */
+  const startRecording = useCallback(async () => {
+    if (questionState.phase !== "awaiting_record") return;
     setQuestionState({ phase: "recording" });
     await recorder.start();
-  }, [currentQuestion, questionState.phase, playQuestionAudio, recorder]);
+  }, [questionState.phase, recorder]);
 
-  const submitAnswer = useCallback(async () => {
+  /** Called when user releases the record button — transcribes and evaluates. */
+  const stopRecording = useCallback(async () => {
     if (questionState.phase !== "recording" || !currentQuestion) return;
 
     setQuestionState({ phase: "processing" });
@@ -90,17 +98,17 @@ export function useInterviewSession(
 
       setQuestionState({ phase: "result", transcript, evaluation });
     } catch (err) {
-      console.error("[Interview] submitAnswer error:", err);
-      setQuestionState({ phase: "idle" });
+      console.error("[Interview] stopRecording error:", err);
+      setQuestionState({ phase: "awaiting_record" });
     }
   }, [questionState.phase, currentQuestion, recorder, sessionId]);
 
+  /** Advances to next question (or repeats in practice mode if wrong). */
   const next = useCallback(async () => {
     if (questionState.phase !== "result") return;
 
     const isCorrect = questionState.evaluation.correct;
 
-    // Practice mode: repeat the question if wrong
     if (mode === "practice" && !isCorrect) {
       setQuestionState({ phase: "idle" });
       return;
@@ -139,7 +147,8 @@ export function useInterviewSession(
     mode,
     recorderState: recorder.state,
     startQuestion,
-    submitAnswer,
+    startRecording,
+    stopRecording,
     next,
     abort,
   };

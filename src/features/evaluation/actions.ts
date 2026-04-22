@@ -27,8 +27,8 @@ Rules:
 - Completely wrong or irrelevant answers are INCORRECT.
 - Respond ONLY with valid JSON matching this schema:
   { "correct": boolean, "feedback": string, "tip": string | null }
-- "feedback": one short sentence explaining your decision (in English).
-- "tip": if incorrect, one short hint to help the user remember. If correct, null.`;
+- "feedback": one short sentence explaining your decision. Write in Brazilian Portuguese.
+- "tip": if incorrect, one short hint to help the user remember, written in Brazilian Portuguese. If correct, null.`;
 
   const userPrompt = `Question: "${question}"
 Accepted answers: ${acceptedAnswers.map((a) => `"${a}"`).join(", ")}
@@ -63,8 +63,8 @@ Candidate's answer: "${userAnswer}"`;
     );
     return {
       correct,
-      feedback: correct ? "Correct answer." : "Incorrect answer.",
-      tip: correct ? null : `One accepted answer is: "${acceptedAnswers[0]}"`,
+      feedback: correct ? "Resposta correta." : "Resposta incorreta.",
+      tip: correct ? null : `Uma resposta aceita é: "${acceptedAnswers[0]}"`,
     };
   }
 }
