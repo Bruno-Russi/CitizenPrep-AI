@@ -188,10 +188,10 @@ feat: UI de histórico e progresso — gráficos, streak calendar, conquistas e 
 **Objetivo:** Autenticação real com Supabase — login, cadastro, sessão persistente e rotas protegidas.
 
 ### Entregas
-- [ ] Instalar `@supabase/supabase-js` e `@supabase/ssr`
-- [ ] Criar `lib/supabase/client.ts` (`createBrowserClient`)
-- [ ] Criar `lib/supabase/server.ts` (`createServerClient` com cookies)
-- [ ] Criar `lib/supabase/admin.ts` (service role para operações admin)
+- [x] Instalar `@supabase/supabase-js` e `@supabase/ssr`
+- [x] Criar `lib/supabase/client.ts` (`createBrowserClient`)
+- [x] Criar `lib/supabase/server.ts` (`createServerClient` com cookies)
+- [x] Criar `lib/supabase/admin.ts` (service role para operações admin)
 - [ ] Criar `src/middleware.ts` para renovação automática de sessão
 - [ ] Criar projeto no Supabase e configurar env vars
 - [ ] Conectar formulário de cadastro à action `features/auth/actions.ts`
