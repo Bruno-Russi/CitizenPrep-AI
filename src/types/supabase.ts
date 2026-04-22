@@ -89,7 +89,8 @@ export interface StreakRow {
 
 // ─── Insert types ─────────────────────────────────────────────────────────────
 
-export type ProfileInsert = Omit<ProfileRow, 'created_at' | 'updated_at'> & {
+export type ProfileInsert = Omit<ProfileRow, 'id' | 'created_at' | 'updated_at'> & {
+  id?: string;
   created_at?: string;
   updated_at?: string;
 };
@@ -118,7 +119,12 @@ export interface Database {
       profiles: {
         Row: ProfileRow;
         Insert: ProfileInsert;
-        Update: Partial<ProfileInsert>;
+        Update: {
+          name?: string | null;
+          email?: string | null;
+          language?: string;
+          updated_at?: string;
+        };
         Relationships: [];
       };
       civics_questions: {

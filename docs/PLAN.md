@@ -192,17 +192,20 @@ feat: UI de histórico e progresso — gráficos, streak calendar, conquistas e 
 - [x] Criar `lib/supabase/client.ts` (`createBrowserClient`)
 - [x] Criar `lib/supabase/server.ts` (`createServerClient` com cookies)
 - [x] Criar `lib/supabase/admin.ts` (service role para operações admin)
-- [ ] Criar `src/middleware.ts` para renovação automática de sessão
+- [x] Criar `src/proxy.ts` para renovação automática de sessão (Next.js 16 — renomeado de middleware)
 - [x] Criar projeto no Supabase e configurar env vars
-- [ ] Conectar formulário de cadastro à action `features/auth/actions.ts`
-- [ ] Conectar formulário de login à action `features/auth/actions.ts`
-- [ ] Implementar fluxo de recuperação de senha (magic link via Supabase)
-- [ ] Implementar confirmação de e-mail (redirect para `/confirm`)
-- [ ] Proteger rotas `(dashboard)` — redirecionar para login se sem sessão
-- [ ] Redirecionar usuário autenticado que tenta acessar `(auth)` para `/dashboard`
+- [x] Conectar formulário de cadastro à action `features/auth/actions.ts`
+- [x] Conectar formulário de login à action `features/auth/actions.ts`
+- [x] Implementar fluxo de recuperação de senha (magic link via Supabase)
+- [x] Implementar confirmação de e-mail (redirect para `/confirm` ou `/onboarding` se auto-confirm)
+- [x] Proteger rotas `(dashboard)` — redirecionar para login se sem sessão
+- [x] Redirecionar usuário autenticado que tenta acessar `(auth)` para `/dashboard`
 - [x] Criar tabela `profiles` no Supabase (id, name, email, created_at, language)
 - [x] Popular `profiles` automaticamente via trigger no Supabase após signup
-- [ ] Substituir dados mockados do header/sidebar pelo nome real do usuário
+- [x] Substituir dados mockados do header/sidebar pelo nome real do usuário
+- [x] Criar `src/app/auth/callback/route.ts` — handler de OAuth/magic link
+- [x] Conectar onboarding ao banco (upsert em `profiles` + `user_metadata`)
+- [x] Aplicar best practices de RLS e índices FK (migration `20260422000006`)
 
 **Commit final:**
 ```

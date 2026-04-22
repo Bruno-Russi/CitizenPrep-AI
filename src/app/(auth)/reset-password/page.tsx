@@ -10,6 +10,7 @@ import { AuthCard } from "@/components/auth/auth-card";
 import { PasswordInput } from "@/components/auth/password-input";
 import { FormField } from "@/components/auth/form-field";
 import { SubmitButton } from "@/components/auth/submit-button";
+import { resetPassword } from "@/features/auth/actions";
 
 const schema = z
   .object({
@@ -29,6 +30,7 @@ type FormData = z.infer<typeof schema>;
 
 export default function ResetPasswordPage() {
   const [done, setDone] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
@@ -36,9 +38,14 @@ export default function ResetPasswordPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  async function onSubmit(_data: FormData) {
-    await new Promise((r) => setTimeout(r, 1000));
-    setDone(true);
+  async function onSubmit(data: FormData) {
+    setServerError(null);
+    const result = await resetPassword({ password: data.password });
+    if (result?.error) {
+      setServerError(result.error);
+    } else {
+      setDone(true);
+    }
   }
 
   if (done) {
@@ -51,9 +58,7 @@ export default function ResetPasswordPage() {
           >
             <CheckCircle size={28} className="text-emerald-400" />
           </div>
-          <p className="text-sm text-white/60">
-            Sua senha foi atualizada com sucesso.
-          </p>
+          <p className="text-sm text-white/60">Sua senha foi atualizada com sucesso.</p>
           <Link
             href="/login"
             className="flex items-center justify-center w-full h-11 rounded-lg font-semibold text-sm text-white transition-all"
@@ -72,6 +77,14 @@ export default function ResetPasswordPage() {
       description="Escolha uma nova senha para a sua conta."
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+        {serverError && (
+          <div
+            className="px-4 py-3 rounded-lg text-sm text-red-400"
+            style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }}
+          >
+            {serverError}
+          </div>
+        )}
         <FormField label="Nova senha" error={errors.password?.message}>
           {(id) => (
             <PasswordInput

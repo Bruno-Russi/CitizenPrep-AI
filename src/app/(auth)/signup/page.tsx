@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,6 +9,7 @@ import { AuthCard } from "@/components/auth/auth-card";
 import { FormField, Input } from "@/components/auth/form-field";
 import { PasswordInput } from "@/components/auth/password-input";
 import { SubmitButton } from "@/components/auth/submit-button";
+import { signUp } from "@/features/auth/actions";
 
 const schema = z
   .object({
@@ -30,7 +30,6 @@ const schema = z
 type FormData = z.infer<typeof schema>;
 
 export default function SignupPage() {
-  const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {
@@ -39,10 +38,10 @@ export default function SignupPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  async function onSubmit(_data: FormData) {
+  async function onSubmit(data: FormData) {
     setServerError(null);
-    await new Promise((r) => setTimeout(r, 800));
-    router.push("/onboarding");
+    const result = await signUp({ name: data.name, email: data.email, password: data.password });
+    if (result?.error) setServerError(result.error);
   }
 
   return (
@@ -122,9 +121,7 @@ export default function SignupPage() {
         </FormField>
 
         <div className="pt-1">
-          <SubmitButton loading={isSubmitting}>
-            Criar conta grátis
-          </SubmitButton>
+          <SubmitButton loading={isSubmitting}>Criar conta grátis</SubmitButton>
         </div>
 
         <p className="text-center text-[11px] text-white/30">

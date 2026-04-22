@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,6 +8,7 @@ import { CheckCircle2, ChevronRight, MapPin, FileText, User } from "lucide-react
 import { FormField, Input } from "@/components/auth/form-field";
 import { SubmitButton } from "@/components/auth/submit-button";
 import { cn } from "@/lib/utils";
+import { completeOnboarding } from "@/features/auth/actions";
 
 const schema = z.object({
   preferredName: z.string().min(2, "Nome deve ter ao menos 2 caracteres"),
@@ -56,8 +56,8 @@ const stepColors = [
 ];
 
 export default function OnboardingPage() {
-  const router = useRouter();
   const [step, setStep] = useState(0);
+  const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -82,10 +82,14 @@ export default function OnboardingPage() {
     setStep((s) => s + 1);
   }
 
-  async function onSubmit(_data: FormData) {
+  async function onSubmit(data: FormData) {
     setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 800));
-    router.push("/dashboard");
+    setServerError(null);
+    const result = await completeOnboarding(data);
+    if (result?.error) {
+      setServerError(result.error);
+      setIsSubmitting(false);
+    }
   }
 
   const isLastStep = step === STEPS.length - 1;
@@ -146,6 +150,15 @@ export default function OnboardingPage() {
 
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
+
+        {serverError && (
+          <div
+            className="mb-4 px-4 py-3 rounded-lg text-sm text-red-400"
+            style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }}
+          >
+            {serverError}
+          </div>
+        )}
 
         {/* Step 0 — nome */}
         {step === 0 && (
@@ -273,9 +286,7 @@ export default function OnboardingPage() {
         {/* Actions */}
         <div className="mt-8">
           {isLastStep ? (
-            <SubmitButton loading={isSubmitting}>
-              Começar a praticar
-            </SubmitButton>
+            <SubmitButton loading={isSubmitting}>Começar a praticar</SubmitButton>
           ) : (
             <button
               type="button"
