@@ -9,6 +9,7 @@ import { CheckCircle, ArrowLeft } from "lucide-react";
 import { AuthCard } from "@/components/auth/auth-card";
 import { FormField, Input } from "@/components/auth/form-field";
 import { SubmitButton } from "@/components/auth/submit-button";
+import { forgotPassword } from "@/features/auth/actions";
 
 const schema = z.object({
   email: z.string().email("E-mail inválido"),
@@ -18,6 +19,7 @@ type FormData = z.infer<typeof schema>;
 
 export default function ForgotPasswordPage() {
   const [sent, setSent] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
@@ -26,9 +28,14 @@ export default function ForgotPasswordPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  async function onSubmit(_data: FormData) {
-    await new Promise((r) => setTimeout(r, 1000));
-    setSent(true);
+  async function onSubmit(data: FormData) {
+    setServerError(null);
+    const result = await forgotPassword(data);
+    if (result?.error) {
+      setServerError(result.error);
+    } else {
+      setSent(true);
+    }
   }
 
   if (sent) {
@@ -75,6 +82,14 @@ export default function ForgotPasswordPage() {
       }
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+        {serverError && (
+          <div
+            className="px-4 py-3 rounded-lg text-sm text-red-400"
+            style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }}
+          >
+            {serverError}
+          </div>
+        )}
         <FormField label="Email" error={errors.email?.message}>
           {(id) => (
             <Input

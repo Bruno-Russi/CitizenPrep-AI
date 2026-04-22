@@ -27,19 +27,35 @@ try {
   await client.connect();
   console.log('✅  Conectado ao banco de dados.');
 
-  const sql = readFileSync(join(__dir, 'migrations/20260422000000_combined.sql'), 'utf8');
+  const migrations = [
+    'migrations/20260422000000_combined.sql',
+    'migrations/20260422000006_rls_and_indexes.sql',
+  ];
 
-  console.log('⏳  Aplicando migrations...');
-  await client.query(sql);
-  console.log('✅  Migrations aplicadas com sucesso!');
+  for (const file of migrations) {
+    const sql = readFileSync(join(__dir, file), 'utf8');
+    console.log(`⏳  Aplicando ${file}...`);
+    await client.query(sql);
+    console.log(`✅  ${file} aplicado.`);
+  }
+
   console.log('');
-  console.log('Tabelas criadas:');
-  console.log('  • public.profiles         (com trigger handle_new_user)');
+  console.log('✅  Todas as migrations aplicadas com sucesso!');
+  console.log('');
+  console.log('Tabelas criadas/atualizadas:');
+  console.log('  • public.profiles         (trigger corrigido para full_name)');
   console.log('  • public.civics_questions  (RLS: authenticated read-only)');
-  console.log('  • public.sessions          (RLS: owner-only)');
-  console.log('  • public.session_answers   (RLS: owner-only via sessions)');
-  console.log('  • public.user_progress     (RLS: owner-only)');
-  console.log('  • public.streaks           (RLS: owner-only)');
+  console.log('  • public.sessions          (RLS: owner-only, otimizado)');
+  console.log('  • public.session_answers   (RLS: owner-only via sessions, otimizado)');
+  console.log('  • public.user_progress     (RLS: owner-only, otimizado)');
+  console.log('  • public.streaks           (RLS: owner-only, otimizado)');
+  console.log('');
+  console.log('Best practices aplicadas (20260422000006):');
+  console.log('  • RLS: auth.uid() → (select auth.uid()) em todas as policies');
+  console.log('  • FK indexes: session_answers.question_id, user_progress.question_id');
+  console.log('  • Covering index: profiles(email) include(name)');
+  console.log('  • Insert policy adicionada em profiles');
+  console.log('  • Trigger handle_new_user: prioriza full_name do metadata');
 } catch (err) {
   console.error('❌  Erro ao aplicar migrations:', err.message);
   process.exit(1);

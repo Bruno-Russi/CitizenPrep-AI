@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,6 +9,7 @@ import { AuthCard } from "@/components/auth/auth-card";
 import { FormField, Input } from "@/components/auth/form-field";
 import { PasswordInput } from "@/components/auth/password-input";
 import { SubmitButton } from "@/components/auth/submit-button";
+import { signIn } from "@/features/auth/actions";
 
 const schema = z.object({
   email: z.string().email("E-mail inválido"),
@@ -19,7 +19,6 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function LoginPage() {
-  const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {
@@ -28,10 +27,10 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  async function onSubmit(_data: FormData) {
+  async function onSubmit(data: FormData) {
     setServerError(null);
-    await new Promise((r) => setTimeout(r, 800));
-    router.push("/dashboard");
+    const result = await signIn(data);
+    if (result?.error) setServerError(result.error);
   }
 
   return (
@@ -94,9 +93,7 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <SubmitButton loading={isSubmitting}>
-          Entrar
-        </SubmitButton>
+        <SubmitButton loading={isSubmitting}>Entrar</SubmitButton>
       </form>
     </AuthCard>
   );
