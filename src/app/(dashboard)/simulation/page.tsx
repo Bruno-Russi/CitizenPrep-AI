@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Mic, BookOpen, Clock, Target, User, Loader2 } from "lucide-react";
+import { Mic, BookOpen, Clock, Target, Loader2 } from "lucide-react";
 import { startSession } from "@/features/interview/actions";
 
 const modes = [
@@ -23,10 +23,10 @@ const modes = [
   {
     id: "practice" as const,
     label: "Modo Prática",
-    description: "Responda sem pressão. Veja o feedback imediato e repita as que errou até dominar.",
+    description: "Repete a pergunta até você acertar. Ideal para fixar o conteúdo antes da entrevista.",
     icon: BookOpen,
     duration: "~20 min",
-    questions: 20,
+    questions: 10,
     badge: "Aprendizado",
     badgeColor: "#A78BFA",
     badgeBg: "rgba(139,92,246,0.1)",
@@ -36,16 +36,10 @@ const modes = [
   },
 ];
 
-const officers = [
-  { id: "onyx" as const,  name: "Agente James",  accent: "Neutro americano",  initials: "AJ" },
-  { id: "nova" as const,  name: "Agente Sarah",  accent: "Sul americano",     initials: "AS" },
-];
-
 export default function SimulationPage() {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [selectedMode, setSelectedMode] = useState<"simulation" | "practice">("simulation");
-  const [selectedVoice, setSelectedVoice] = useState<"onyx" | "nova">("onyx");
   const [error, setError] = useState<string | null>(null);
 
   const handleStart = () => {
@@ -56,26 +50,22 @@ export default function SimulationPage() {
         setError(result.error);
         return;
       }
-      router.push(
-        `/simulation/${result.sessionId}?voice=${selectedVoice}`
-      );
+      router.push(`/simulation/${result.sessionId}?mode=${selectedMode}`);
     });
   };
 
   return (
     <div className="max-w-3xl mx-auto space-y-8">
 
-      {/* Header */}
       <div className="animate-fade-up">
         <h1 className="text-[28px] font-bold text-white leading-tight tracking-tight">
           Simular Entrevista
         </h1>
         <p className="text-white/45 text-sm mt-1">
-          Escolha o modo e o oficial para começar sua simulação por voz.
+          Escolha o modo para começar sua simulação por voz.
         </p>
       </div>
 
-      {/* Modo */}
       <div className="space-y-3 animate-fade-up animation-delay-100">
         <p className="text-[11px] font-medium uppercase tracking-widest text-white/30">
           Modo de simulação
@@ -133,61 +123,8 @@ export default function SimulationPage() {
         </div>
       </div>
 
-      {/* Oficial */}
-      <div className="space-y-3 animate-fade-up animation-delay-200">
-        <p className="text-[11px] font-medium uppercase tracking-widest text-white/30">
-          Oficial entrevistador
-        </p>
-
-        <div
-          className="rounded-xl overflow-hidden"
-          style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.07)" }}
-        >
-          {officers.map((officer, i) => {
-            const active = selectedVoice === officer.id;
-            return (
-              <button
-                key={officer.id}
-                type="button"
-                onClick={() => setSelectedVoice(officer.id)}
-                className="w-full flex items-center gap-4 px-5 py-4 text-left transition-colors"
-                style={{
-                  background: active ? "rgba(59,130,246,0.06)" : "transparent",
-                  borderBottom: i < officers.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none",
-                }}
-              >
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-xs font-bold text-white"
-                  style={{
-                    background: active ? "linear-gradient(135deg, #3B82F6, #06B6D4)" : "rgba(255,255,255,0.06)",
-                    border: active ? "none" : "1px solid rgba(255,255,255,0.1)",
-                  }}
-                >
-                  {active ? <span>{officer.initials}</span> : <User size={14} className="text-white/40" />}
-                </div>
-
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-white">{officer.name}</p>
-                  <p className="text-xs text-white/35 mt-0.5">{officer.accent}</p>
-                </div>
-
-                <div
-                  className="w-4 h-4 rounded-full flex items-center justify-center shrink-0 transition-all"
-                  style={{ border: active ? "2px solid #3B82F6" : "2px solid rgba(255,255,255,0.15)", background: "transparent" }}
-                >
-                  {active && <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#3B82F6" }} />}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* CTA */}
       <div className="animate-fade-up animation-delay-300 space-y-3">
-        {error && (
-          <p className="text-center text-sm text-red-400">{error}</p>
-        )}
+        {error && <p className="text-center text-sm text-red-400">{error}</p>}
         <button
           type="button"
           onClick={handleStart}

@@ -45,7 +45,7 @@ export async function POST(request: Request) {
   }
 
   const text: string = body.text.trim();
-  const voice: string = body.voice === "nova" ? "nova" : "onyx";
+  const voice: string = body.voice === "nova" ? "nova" : "echo";
 
   // Tamanho máximo — textos longos são suspeitos
   if (text.length > MAX_TEXT_LENGTH) {
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
   try {
     const mp3 = await openai.audio.speech.create({
       model: "tts-1",
-      voice: voice as "onyx" | "nova",
+      voice: voice as "echo" | "nova",
       input: text,
       response_format: "mp3",
     });

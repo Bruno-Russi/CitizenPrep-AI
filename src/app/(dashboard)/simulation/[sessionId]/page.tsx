@@ -5,17 +5,15 @@ import { getRandomQuestions } from "@/lib/supabase/queries";
 
 type PageProps = {
   params: Promise<{ sessionId: string }>;
-  searchParams: Promise<{ format?: string; voice?: string }>;
+  searchParams: Promise<{ format?: string; mode?: string }>;
 };
 
 export default async function InterviewSessionPage({ params, searchParams }: PageProps) {
   const { sessionId } = await params;
   const sp = await searchParams;
 
-  const format = sp.format === "2025" ? "2025" : "standard";
-  const voice = sp.voice === "nova" ? "nova" : "onyx";
+  const mode = sp.mode === "practice" ? "practice" : "simulation";
 
-  // Validate session belongs to the current user
   const supabase = await getSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -42,7 +40,7 @@ export default async function InterviewSessionPage({ params, searchParams }: Pag
     <InterviewClient
       sessionId={sessionId}
       questions={questions}
-      voice={voice}
+      mode={mode}
     />
   );
 }

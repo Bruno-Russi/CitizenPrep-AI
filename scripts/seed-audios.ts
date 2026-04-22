@@ -11,9 +11,28 @@
  * Storage, a pergunta é ignorada sem nenhuma chamada à OpenAI.
  */
 
+import { readFileSync } from "fs";
+import { resolve } from "path";
 import OpenAI from "openai";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "../src/types/database";
+
+// Carrega .env.local manualmente (ts-node não usa o loader do Next.js)
+try {
+  const envPath = resolve(process.cwd(), ".env.local");
+  const lines = readFileSync(envPath, "utf-8").split("\n");
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eq = trimmed.indexOf("=");
+    if (eq === -1) continue;
+    const key = trimmed.slice(0, eq).trim();
+    const value = trimmed.slice(eq + 1).trim().replace(/^["']|["']$/g, "");
+    if (!process.env[key]) process.env[key] = value;
+  }
+} catch {
+  // .env.local não existe — variáveis devem vir do ambiente
+}
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 
@@ -22,8 +41,14 @@ const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
 const BUCKET = "question-audios";
 
-const VOICES = ["onyx", "nova"] as const;
+const VOICES = ["echo", "nova"] as const;
 type Voice = (typeof VOICES)[number];
+
+// Mapeamento voz → coluna no banco (coluna "onyx" mantida por compatibilidade com schema existente)
+const VOICE_TO_COL: Record<Voice, "audio_url_onyx" | "audio_url_nova"> = {
+  echo: "audio_url_onyx",
+  nova: "audio_url_nova",
+};
 
 const args = process.argv.slice(2);
 const forceRegen = args.includes("--force");
@@ -114,7 +139,7 @@ async function main() {
     const updates: Record<string, string> = {};
 
     for (const voice of voicesToRun) {
-      const urlCol = `audio_url_${voice}` as "audio_url_onyx" | "audio_url_nova";
+      const urlCol = VOICE_TO_COL[voice];
       const existingUrl = q[urlCol];
 
       if (!forceRegen && existingUrl) {

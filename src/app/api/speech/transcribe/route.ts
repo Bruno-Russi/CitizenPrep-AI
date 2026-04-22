@@ -21,16 +21,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing audio file" }, { status: 400 });
   }
 
-  const file = new File([audioFile], "audio.webm", { type: audioFile.type || "audio/webm" });
+  // Whisper requires a supported extension in the filename to detect format.
+  // Chrome records webm/opus; we send it as .webm which Whisper accepts.
+  // If the browser reports a different mime type (e.g. video/webm), still use .webm.
+  const mimeType = audioFile.type || "audio/webm";
+  const ext = mimeType.includes("ogg") ? "ogg" : mimeType.includes("mp4") ? "mp4" : "webm";
+  const file = new File([audioFile], `audio.${ext}`, { type: mimeType });
 
   try {
     const transcription = await openai.audio.transcriptions.create({
       model: "whisper-1",
       file,
       language: "en",
+      response_format: "text",
     });
 
-    return NextResponse.json({ transcript: transcription.text });
+    // response_format "text" returns a plain string
+    return NextResponse.json({ transcript: transcription as unknown as string });
   } catch (err) {
     console.error("[Transcribe] OpenAI error:", err);
     return NextResponse.json({ error: "Transcription failed" }, { status: 500 });

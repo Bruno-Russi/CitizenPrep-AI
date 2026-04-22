@@ -7,7 +7,7 @@ import { evaluateAnswer, type EvaluationResult } from "@/features/evaluation/act
 import { saveAnswer, finalizeSession } from "@/features/interview/actions";
 import type { CivicsQuestionRow } from "@/types/supabase";
 
-type Voice = "onyx" | "nova";
+export type SessionMode = "simulation" | "practice";
 
 export type QuestionState =
   | { phase: "idle" }
@@ -27,34 +27,27 @@ export type AnswerRecord = {
 export function useInterviewSession(
   sessionId: string,
   questions: CivicsQuestionRow[],
-  voice: Voice = "onyx"
+  mode: SessionMode = "simulation"
 ) {
   const [index, setIndex] = useState(0);
   const [questionState, setQuestionState] = useState<QuestionState>({ phase: "idle" });
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
-  const { playQuestionAudio, speakDynamic } = useTTS(voice);
+  const { playQuestionAudio } = useTTS("echo");
   const recorder = useAudioRecorder();
   const abortRef = useRef(false);
 
   const currentQuestion = questions[index] ?? null;
 
-  /** Plays the current question and starts recording after audio ends. */
   const startQuestion = useCallback(async () => {
     if (!currentQuestion || questionState.phase !== "idle") return;
 
     abortRef.current = false;
-
-    const audioUrl =
-      voice === "nova"
-        ? currentQuestion.audio_url_nova
-        : currentQuestion.audio_url_onyx;
-
     setQuestionState({ phase: "playing_question" });
 
+    const audioUrl = currentQuestion.audio_url_onyx;
     if (audioUrl) {
       await playQuestionAudio(audioUrl);
     } else {
-      // Fallback: use dynamic TTS only if no pre-generated audio (should not happen in production)
       console.warn("[Interview] No pre-generated audio for question", currentQuestion.id);
     }
 
@@ -62,9 +55,8 @@ export function useInterviewSession(
 
     setQuestionState({ phase: "recording" });
     await recorder.start();
-  }, [currentQuestion, questionState.phase, voice, playQuestionAudio, recorder]);
+  }, [currentQuestion, questionState.phase, playQuestionAudio, recorder]);
 
-  /** Stops recording, transcribes, evaluates, and saves the answer. */
   const submitAnswer = useCallback(async () => {
     if (questionState.phase !== "recording" || !currentQuestion) return;
 
@@ -88,7 +80,6 @@ export function useInterviewSession(
 
       setAnswers((prev) => [...prev, record]);
 
-      // Persist to DB in the background — don't block UI
       saveAnswer({
         sessionId,
         questionId: currentQuestion.id,
@@ -102,16 +93,22 @@ export function useInterviewSession(
       console.error("[Interview] submitAnswer error:", err);
       setQuestionState({ phase: "idle" });
     }
-  }, [questionState.phase, currentQuestion, recorder]);
+  }, [questionState.phase, currentQuestion, recorder, sessionId]);
 
-  /** Advances to the next question or marks the session complete. */
   const next = useCallback(async () => {
+    if (questionState.phase !== "result") return;
+
+    const isCorrect = questionState.evaluation.correct;
+
+    // Practice mode: repeat the question if wrong
+    if (mode === "practice" && !isCorrect) {
+      setQuestionState({ phase: "idle" });
+      return;
+    }
+
     const nextIndex = index + 1;
     if (nextIndex >= questions.length) {
-      const finalScore = answers.filter((a) => a.evaluation.correct).length + (
-        // include the current answer if we're calling next() from result phase
-        questionState.phase === "result" && questionState.evaluation.correct ? 0 : 0
-      );
+      const finalScore = answers.filter((a) => a.evaluation.correct).length + (isCorrect ? 1 : 0);
       await finalizeSession(sessionId, finalScore, questions.length).catch((e) =>
         console.error("[Interview] finalizeSession failed:", e)
       );
@@ -120,9 +117,8 @@ export function useInterviewSession(
       setIndex(nextIndex);
       setQuestionState({ phase: "idle" });
     }
-  }, [index, questions.length, answers, sessionId, questionState]);
+  }, [index, questions.length, answers, sessionId, questionState, mode]);
 
-  /** Aborts playback and stops recording if active. */
   const abort = useCallback(async () => {
     abortRef.current = true;
     if (recorder.state === "recording") {
@@ -140,11 +136,11 @@ export function useInterviewSession(
     questionState,
     answers,
     score,
+    mode,
     recorderState: recorder.state,
     startQuestion,
     submitAnswer,
     next,
     abort,
-    speakDynamic,
   };
 }

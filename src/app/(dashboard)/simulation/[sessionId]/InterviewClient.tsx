@@ -2,53 +2,50 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Volume2, RotateCcw, X, CheckCircle, XCircle } from "lucide-react";
+import { Volume2, RotateCcw, X, CheckCircle, XCircle, RefreshCw } from "lucide-react";
 import { OfficerAvatar } from "@/components/interview/officer-avatar";
 import { AudioWaveform } from "@/components/interview/audio-waveform";
 import { RecordButton } from "@/components/interview/record-button";
 import { QuestionCard } from "@/components/interview/question-card";
 import { TranscriptBubble } from "@/components/interview/transcript-bubble";
 import { SessionProgress } from "@/components/interview/session-progress";
-import { useInterviewSession } from "@/features/interview/hooks/useInterviewSession";
+import { useInterviewSession, type SessionMode } from "@/features/interview/hooks/useInterviewSession";
 import type { CivicsQuestionRow } from "@/types/supabase";
 
 type Props = {
   sessionId: string;
   questions: CivicsQuestionRow[];
-  voice?: "onyx" | "nova";
+  mode?: SessionMode;
 };
 
-export function InterviewClient({ sessionId, questions, voice = "onyx" }: Props) {
+export function InterviewClient({ sessionId, questions, mode = "simulation" }: Props) {
   const router = useRouter();
   const {
     currentQuestion,
     questionIndex,
     totalQuestions,
     questionState,
-    answers,
     score,
+    answers,
     recorderState,
     startQuestion,
     submitAnswer,
     next,
     abort,
-  } = useInterviewSession(sessionId, questions, voice);
+  } = useInterviewSession(sessionId, questions, mode);
 
-  // Auto-start the first question on mount
+  // Auto-start whenever a new question becomes active
   useEffect(() => {
     if (questionState.phase === "idle") {
       startQuestion();
     }
-  // Only run once on mount
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [questionIndex]);
 
-  // When session is complete, redirect to result page
+  // Redirect to result page when session is complete
   useEffect(() => {
     if (questionState.phase === "complete") {
-      router.push(
-        `/simulation/${sessionId}/result?score=${score}&total=${totalQuestions}`
-      );
+      router.push(`/simulation/${sessionId}/result?score=${score}&total=${totalQuestions}`);
     }
   }, [questionState.phase, router, sessionId, score, totalQuestions]);
 
@@ -58,6 +55,10 @@ export function InterviewClient({ sessionId, questions, voice = "onyx" }: Props)
   const isResult = questionState.phase === "result";
 
   const answeredCount = answers.length;
+  const isPractice = mode === "practice";
+
+  // In practice mode, show total correct out of questions answered (not index)
+  const isLastQuestion = questionIndex + 1 >= totalQuestions;
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#0A0F1E" }}>
@@ -82,7 +83,7 @@ export function InterviewClient({ sessionId, questions, voice = "onyx" }: Props)
         />
 
         <button
-          onClick={() => isResult ? next() : startQuestion()}
+          onClick={startQuestion}
           className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors"
           style={{ background: "rgba(255,255,255,0.04)" }}
           aria-label="Repetir pergunta"
@@ -90,7 +91,7 @@ export function InterviewClient({ sessionId, questions, voice = "onyx" }: Props)
         >
           <Volume2
             size={18}
-            className={isRecording || isResult ? "text-blue-400" : "text-white/20"}
+            className={isRecording ? "text-blue-400" : "text-white/20"}
           />
         </button>
       </header>
@@ -115,6 +116,7 @@ export function InterviewClient({ sessionId, questions, voice = "onyx" }: Props)
           {isResult && (
             <>
               <TranscriptBubble transcript={questionState.transcript} />
+
               {/* Feedback card */}
               <div
                 className="rounded-xl p-4 space-y-2"
@@ -133,6 +135,11 @@ export function InterviewClient({ sessionId, questions, voice = "onyx" }: Props)
                   <p className="text-sm font-medium text-white">
                     {questionState.evaluation.correct ? "Correto!" : "Incorreto"}
                   </p>
+                  {isPractice && !questionState.evaluation.correct && (
+                    <span className="ml-auto text-[10px] text-amber-400/80 font-medium uppercase tracking-wide">
+                      Tente novamente
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs text-white/60 leading-relaxed">
                   {questionState.evaluation.feedback}
@@ -143,15 +150,22 @@ export function InterviewClient({ sessionId, questions, voice = "onyx" }: Props)
                   </p>
                 )}
               </div>
+
               <button
                 onClick={() => next()}
-                className="w-full h-12 rounded-xl font-semibold text-sm text-white transition-all"
+                className="w-full h-12 rounded-xl font-semibold text-sm text-white transition-all flex items-center justify-center gap-2"
                 style={{
                   background: "linear-gradient(135deg, #3B82F6, #2563EB)",
                   boxShadow: "0 1px 20px rgba(59,130,246,0.3)",
                 }}
               >
-                {questionIndex + 1 >= totalQuestions ? "Ver resultado" : "Próxima pergunta →"}
+                {isPractice && !questionState.evaluation.correct ? (
+                  <><RefreshCw size={15} /> Repetir pergunta</>
+                ) : isLastQuestion ? (
+                  "Ver resultado"
+                ) : (
+                  "Próxima pergunta →"
+                )}
               </button>
             </>
           )}

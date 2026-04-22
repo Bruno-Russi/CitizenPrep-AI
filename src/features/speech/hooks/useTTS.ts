@@ -2,7 +2,7 @@
 
 import { useRef, useState, useCallback } from "react";
 
-type Voice = "onyx" | "nova";
+type Voice = "echo" | "nova";
 
 /**
  * Hook de TTS para a simulação.
@@ -13,7 +13,7 @@ type Voice = "onyx" | "nova";
  * - Textos dinâmicos (cumprimento, encerramento) → `speakDynamic(text)` — chama
  *   /api/tts apenas para textos com dados variáveis do usuário.
  */
-export function useTTS(voice: Voice = "onyx") {
+export function useTTS(voice: Voice = "echo") {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
 
