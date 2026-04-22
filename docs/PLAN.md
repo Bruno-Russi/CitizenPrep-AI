@@ -138,15 +138,15 @@ feat: UI da entrevista — tela de simulação, waveform, gravação, feedback e
 **Objetivo:** Telas de histórico, evolução e gamificação com dados mockados realistas.
 
 ### Entregas
-- [ ] Gráfico de evolução de score ao longo do tempo (recharts LineChart)
-- [ ] Gráfico de domínio por tópico (recharts RadarChart ou BarChart)
-- [ ] Componente `SessionRow`: linha de histórico com data, score, modo e botão de revisão
-- [ ] Tela de revisão de sessão passada (`/history/[sessionId]`): replay das respostas e feedback
-- [ ] Componente `TopicMasteryCard`: card por tópico com % de acerto e botão "praticar este tópico"
-- [ ] Componente `StreakCalendar`: calendário de atividade estilo GitHub contributions
-- [ ] Componente `AchievementBadge`: medalhas desbloqueadas (Primeira Simulação, 7 dias de streak, etc.)
-- [ ] Tela de perfil com resumo de conquistas e progresso geral
-- [ ] Dados mockados com 10+ sessões fictícias para testar todos os estados visuais
+- [x] Gráfico de evolução de score ao longo do tempo (recharts LineChart)
+- [x] Gráfico de domínio por tópico — barras por tópico no dashboard e /history
+- [x] Componente `SessionRow`: linha de histórico com data, score, modo e link de revisão
+- [x] Tela de revisão de sessão passada (`/history/[sessionId]`): replay das respostas e feedback
+- [x] Componente `TopicMasteryCard`: card por tópico com % de acerto e badge de nível
+- [x] Componente `StreakCalendar`: calendário de atividade estilo GitHub contributions (12 semanas)
+- [x] Componente `AchievementBadge`: medalhas desbloqueadas/bloqueadas com glow e cadeado
+- [x] Seção de conquistas e domínio por tópico integrada no /dashboard
+- [x] Dados mockados com 12 sessões fictícias para testar todos os estados visuais
 
 **Commit final:**
 ```

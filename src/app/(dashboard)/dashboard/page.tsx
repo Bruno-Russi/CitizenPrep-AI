@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Flame, Zap, Mic, BookOpen, TrendingUp, ChevronRight, Award, BarChart3 } from "lucide-react";
+import { AchievementBadge } from "@/components/progress/achievement-badge";
+import { ACHIEVEMENTS, TOPIC_MASTERY } from "@/features/progress/mock-data";
 
 const mockStats = {
   name: "John",
@@ -12,12 +14,6 @@ const mockStats = {
   dominated: 38,
 };
 
-const quickTopics = [
-  { label: "Governo Federal",    progress: 80, total: 28 },
-  { label: "História Americana", progress: 55, total: 22 },
-  { label: "Direitos e Deveres", progress: 90, total: 18 },
-  { label: "Sistema Judiciário", progress: 40, total: 14 },
-];
 
 export default function DashboardPage() {
   const xpPercent = (mockStats.xp / mockStats.xpToNext) * 100;
@@ -219,14 +215,13 @@ export default function DashboardPage() {
         className="rounded-xl animate-fade-up animation-delay-400 overflow-hidden"
         style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.07)" }}
       >
-        {/* Card header */}
         <div
           className="px-5 py-4 flex items-center justify-between"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
         >
           <div className="flex items-center gap-2.5">
             <BarChart3 size={15} className="text-blue-400" />
-            <span className="text-sm font-semibold text-white">Progresso por Tópico</span>
+            <span className="text-sm font-semibold text-white">Domínio por Tópico</span>
           </div>
           <Link
             href="/practice"
@@ -237,41 +232,57 @@ export default function DashboardPage() {
         </div>
 
         <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-          {quickTopics.map((t) => (
-            <div
-              key={t.label}
-              className="px-5 py-4 flex items-center gap-5"
-              style={{ borderColor: "rgba(255,255,255,0.05)" }}
-            >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-baseline justify-between mb-2">
-                  <span className="text-sm font-medium text-white/80">{t.label}</span>
-                  <span className="text-xs font-mono text-white/40 ml-3 shrink-0">
-                    {t.progress}%
-                  </span>
+          {TOPIC_MASTERY.slice(0, 4).map((t) => {
+            const pct = Math.round((t.correct / t.total) * 100);
+            return (
+              <div
+                key={t.topic}
+                className="px-5 py-4 flex items-center gap-4"
+                style={{ borderColor: "rgba(255,255,255,0.05)" }}
+              >
+                <div className="w-2 h-2 rounded-full shrink-0" style={{ background: t.color }} />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-baseline justify-between mb-2">
+                    <span className="text-sm font-medium text-white/80">{t.topic}</span>
+                    <span className="text-xs font-mono text-white/40 ml-3 shrink-0">{pct}%</span>
+                  </div>
+                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${t.color}99, ${t.color})` }}
+                    />
+                  </div>
                 </div>
-                <div
-                  className="h-1.5 rounded-full overflow-hidden"
-                  style={{ background: "rgba(255,255,255,0.06)" }}
-                >
-                  <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{
-                      width: `${t.progress}%`,
-                      background: t.progress >= 80
-                        ? "linear-gradient(90deg, #10B981, #06B6D4)"
-                        : t.progress >= 50
-                        ? "linear-gradient(90deg, #3B82F6, #06B6D4)"
-                        : "linear-gradient(90deg, #6B7280, #3B82F6)",
-                    }}
-                  />
-                </div>
+                <span className="text-[11px] font-mono text-white/25 shrink-0">{t.total}q</span>
               </div>
-              <span className="text-[11px] font-mono text-white/25 shrink-0">
-                {t.total}q
-              </span>
-            </div>
-          ))}
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Conquistas ── */}
+      <div
+        className="rounded-xl animate-fade-up animation-delay-500 overflow-hidden"
+        style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.07)" }}
+      >
+        <div
+          className="px-5 py-4 flex items-center justify-between"
+          style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+        >
+          <div className="flex items-center gap-2.5">
+            <Award size={15} className="text-amber-400" />
+            <span className="text-sm font-semibold text-white">Conquistas</span>
+          </div>
+          <span className="text-[11px] text-white/30">
+            {ACHIEVEMENTS.filter((a) => a.unlocked).length}/{ACHIEVEMENTS.length}
+          </span>
+        </div>
+        <div className="px-5 py-5">
+          <div className="grid grid-cols-6 gap-3">
+            {ACHIEVEMENTS.map((a) => (
+              <AchievementBadge key={a.id} achievement={a} size="sm" />
+            ))}
+          </div>
         </div>
       </div>
     </div>
