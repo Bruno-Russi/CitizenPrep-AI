@@ -1,7 +1,7 @@
 # CitizenPrep AI — Plano de Execução
 
 > Princípio: interface primeiro, backend depois. Cada milestone é um incremento entregável e testável antes de avançar.
-> O app é 100% gratuito na v1 — sem landing page, sem pagamentos, sem planos.
+> O app é 100% gratuito na v1 — sem pagamentos, sem planos pagos ainda.
 
 ---
 
@@ -9,6 +9,7 @@
 
 | # | Nome | Branch | Foco |
 |---|---|---|---|
+| M0 | Landing Page | `feat/landing-page` | Página pública de entrada do produto |
 | M1 | Setup & Fundação | `setup/foundation` | Projeto, design system, estrutura |
 | M2 | Auth UI | `feat/auth-ui` | Login, cadastro, recuperação (telas) |
 | M3 | Dashboard UI | `feat/dashboard-ui` | Home, navegação, telas do app |
@@ -20,6 +21,32 @@
 | M9 | Progresso & Gamificação | `feat/progress-backend` | Histórico real, streak, XP, analytics |
 | M10 | Observabilidade | `feat/observability` | PostHog, Sentry, logs |
 | M11 | Deploy & Produção | `feat/production` | Vercel, env vars, domínio, CI |
+
+---
+
+## M0 — Landing Page
+
+**Branch:** `feat/landing-page`
+**Objetivo:** Página pública de entrada do produto — apresenta o CitizenPrep AI para visitantes não autenticados.
+
+### Entregas
+- [x] Navbar fixa com logo CitizenPrep AI, links de navegação e botão "Começar grátis"
+- [x] Hero com headline de impacto, subtítulo, dois CTAs e terminal animado com métricas live
+- [x] Seção de stats: 94% aprovação, 128 perguntas USCIS, 12 dias de preparo, 1.800+ usuários
+- [x] Seção "Como funciona" com 3 passos (escolha o modo → responda em voz → receba feedback)
+- [x] Grid de 6 funcionalidades principais com cards e tags
+- [x] Tabela de preços: plano Grátis com badge "Somente por enquanto", R$ 0/mês, 8 features
+- [x] CTA final com headline e botão de conversão
+- [x] Footer com logo e links de navegação
+- [x] Ticker animado em CSS puro com métricas em loop infinito
+- [x] Efeito glow nos cards ao hover (CSS-only, sem JavaScript)
+- [x] Totalmente responsivo — mobile e desktop
+- [x] Server Component puro (sem `"use client"`)
+
+**Commit final:**
+```
+feat: landing page pública — hero, stats, funcionalidades, preços e CTA (CitizenPrep AI)
+```
 
 ---
 
@@ -56,17 +83,17 @@ feat: setup inicial — Next.js 15, Tailwind, shadcn/ui, design system e estrutu
 **Objetivo:** Telas de autenticação com design final, sem backend ainda — apenas UI navegável.
 
 ### Entregas
-- [ ] Criar layout `src/app/(auth)/layout.tsx` (split screen: visual esquerda, form direita)
-- [ ] Tela de Login: e-mail + senha, link "esqueci a senha", link para cadastro
-- [ ] Tela de Cadastro: nome, e-mail, senha, confirmação de senha
-- [ ] Tela de Recuperação de Senha: campo de e-mail, feedback de envio
-- [ ] Tela de Redefinição de Senha: nova senha + confirmação
-- [ ] Tela de Confirmação de E-mail: página de espera/sucesso
-- [ ] Componentes de formulário reutilizáveis (`FormField`, `PasswordInput`, `AuthCard`)
-- [ ] Validação de campos no cliente com react-hook-form + Zod
-- [ ] Estados de loading (botão com spinner)
-- [ ] Estados de erro (mensagens inline)
-- [ ] Responsivo mobile
+- [x] Criar layout `src/app/(auth)/layout.tsx` (split screen: visual esquerda, form direita)
+- [x] Tela de Login: e-mail + senha, link "esqueci a senha", link para cadastro
+- [x] Tela de Cadastro: nome, e-mail, senha, confirmação de senha
+- [x] Tela de Recuperação de Senha: campo de e-mail, feedback de envio
+- [x] Tela de Redefinição de Senha: nova senha + confirmação
+- [x] Tela de Confirmação de E-mail: página de espera/sucesso
+- [x] Componentes de formulário reutilizáveis (`FormField`, `PasswordInput`, `AuthCard`)
+- [x] Validação de campos no cliente com react-hook-form + Zod
+- [x] Estados de loading (botão com spinner)
+- [x] Estados de erro (mensagens inline)
+- [x] Responsivo mobile
 
 **Commit final:**
 ```
@@ -81,19 +108,19 @@ feat: telas de auth — login, cadastro e recuperação de senha (UI)
 **Objetivo:** Todas as telas do app autenticado com dados mockados — navegação completa funcionando.
 
 ### Entregas
-- [ ] Criar layout `src/app/(dashboard)/layout.tsx` com sidebar (desktop) e bottom nav (mobile)
-- [ ] Componente `Sidebar` com links: Dashboard, Praticar, Simular, Histórico, Configurações
-- [ ] Componente `BottomNav` para mobile
-- [ ] Tela Dashboard (`/dashboard`): boas-vindas, streak, XP, próxima sessão, atalhos rápidos
-- [ ] Componente `StreakCard` com contador de dias e chama de progresso
-- [ ] Componente `XPBar` com nível atual e progresso até o próximo
-- [ ] Componente `StatsGrid`: total de simulações, taxa de acerto, perguntas dominadas
-- [ ] Tela Praticar (`/practice`): grid de tópicos (Governo, História, etc.) com % de domínio por tópico
-- [ ] Tela Simular (`/simulation`): escolha do modo (Prática vs Simulação), escolha de voz do oficial
-- [ ] Tela Histórico (`/history`): lista de sessões passadas, gráfico de evolução (recharts)
-- [ ] Tela Configurações (`/settings`): perfil, preferências de voz, idioma
-- [ ] Todos os dados são mockados (arrays estáticos em cada componente)
-- [ ] Responsivo em mobile e desktop
+- [x] Criar layout `src/app/(dashboard)/layout.tsx` com sidebar (desktop) e bottom nav (mobile)
+- [x] Componente `Sidebar` com links: Dashboard, Praticar, Simular, Histórico, Configurações
+- [x] Componente `BottomNav` para mobile
+- [x] Tela Dashboard (`/dashboard`): boas-vindas, streak, XP, próxima sessão, atalhos rápidos
+- [x] Componente `StreakCard` com contador de dias e chama de progresso
+- [x] Componente `XPBar` com nível atual e progresso até o próximo
+- [x] Componente `StatsGrid`: total de simulações, taxa de acerto, perguntas dominadas
+- [x] Tela Praticar (`/practice`): grid de tópicos (Governo, História, etc.) com % de domínio por tópico
+- [x] Tela Simular (`/simulation`): escolha do modo (Prática vs Simulação), escolha de voz do oficial
+- [x] Tela Histórico (`/history`): lista de sessões passadas, gráfico de evolução (recharts)
+- [x] Tela Configurações (`/settings`): perfil, preferências de voz, idioma
+- [x] Todos os dados são mockados (arrays estáticos em cada componente)
+- [x] Responsivo em mobile e desktop
 
 **Commit final:**
 ```
@@ -108,25 +135,27 @@ feat: dashboard UI completo — todas as telas com dados mockados e navegação 
 **Objetivo:** Tela central de simulação com toda a interface de voz — sem integração real com APIs ainda.
 
 ### Entregas
-- [ ] Tela de entrevista (`/simulation/[sessionId]`) com layout fullscreen/foco
-- [ ] Componente `OfficerAvatar`: avatar do oficial com animação de fala (pulse no border)
-- [ ] Componente `AudioWaveform`: animação de onda enquanto o oficial fala ou usuário grava
-- [ ] Componente `RecordButton`: botão central grande com estados (idle → gravando → processando)
-- [ ] Componente `QuestionCard`: exibe a pergunta atual e número (ex: "Pergunta 3 de 10")
-- [ ] Componente `TranscriptBubble`: mostra o que foi transcrito da fala do usuário
-- [ ] Componente `FeedbackOverlay`: overlay de resultado (correto ✓ / incorreto ✗) com animação
-- [ ] Componente `SessionProgress`: barra de progresso (quantas perguntas restam)
-- [ ] Tela de resultado da sessão (`/simulation/[sessionId]/result`): score, aprovado/reprovado, lista de erros
-- [ ] Componente `ResultCard`: card por pergunta com resposta do usuário vs resposta correta
-- [ ] Componente `StudyTip`: dica personalizada baseada nos erros (mockado)
-- [ ] Botão para repetir a pergunta do oficial
-- [ ] Controle de velocidade de fala (lento / normal / rápido) — UI apenas
-- [ ] Responsivo e funcional em mobile (botão de gravação acessível com o polegar)
+- [x] Tela de entrevista (`/simulation/[sessionId]`) com layout fullscreen/foco
+- [x] Componente `OfficerAvatar`: avatar do oficial com animação de fala (pulse no border)
+- [x] Componente `AudioWaveform`: animação de onda enquanto o oficial fala ou usuário grava
+- [x] Componente `RecordButton`: botão central grande com estados (idle → gravando → processando)
+- [x] Componente `QuestionCard`: exibe a pergunta atual e número (ex: "Pergunta 3 de 10")
+- [x] Componente `TranscriptBubble`: mostra o que foi transcrito da fala do usuário
+- [x] Componente `FeedbackOverlay`: overlay de resultado (correto ✓ / incorreto ✗) com animação
+- [x] Componente `SessionProgress`: barra de progresso (quantas perguntas restam)
+- [x] Tela de resultado da sessão (`/simulation/[sessionId]/result`): score, aprovado/reprovado, lista de erros
+- [x] Componente `ResultCard`: card por pergunta com resposta do usuário vs resposta correta
+- [x] Componente `StudyTip`: dica personalizada baseada nos erros (mockado)
+- [x] Botão para repetir a pergunta do oficial
+- [x] Controle de velocidade de fala (lento / normal / rápido) — UI apenas
+- [x] Responsivo e funcional em mobile (botão de gravação acessível com o polegar)
 
 **Commit final:**
 ```
 feat: UI da entrevista — tela de simulação, waveform, gravação, feedback e tela de resultado
 ```
+
+> **Nota:** M2, M3 e M4 foram desenvolvidos juntos na branch `feat/interview-ui` com redesign completo do design system para "Deep Space" — dark mode, Inter font, paleta azul/cyan (#3B82F6/#06B6D4), glassmorphism, animações CSS. O design original (navy/sage/amber) foi substituído integralmente.
 
 ---
 
@@ -136,15 +165,15 @@ feat: UI da entrevista — tela de simulação, waveform, gravação, feedback e
 **Objetivo:** Telas de histórico, evolução e gamificação com dados mockados realistas.
 
 ### Entregas
-- [ ] Gráfico de evolução de score ao longo do tempo (recharts LineChart)
-- [ ] Gráfico de domínio por tópico (recharts RadarChart ou BarChart)
-- [ ] Componente `SessionRow`: linha de histórico com data, score, modo e botão de revisão
-- [ ] Tela de revisão de sessão passada (`/history/[sessionId]`): replay das respostas e feedback
-- [ ] Componente `TopicMasteryCard`: card por tópico com % de acerto e botão "praticar este tópico"
-- [ ] Componente `StreakCalendar`: calendário de atividade estilo GitHub contributions
-- [ ] Componente `AchievementBadge`: medalhas desbloqueadas (Primeira Simulação, 7 dias de streak, etc.)
-- [ ] Tela de perfil com resumo de conquistas e progresso geral
-- [ ] Dados mockados com 10+ sessões fictícias para testar todos os estados visuais
+- [x] Gráfico de evolução de score ao longo do tempo (recharts LineChart)
+- [x] Gráfico de domínio por tópico — barras por tópico no dashboard e /history
+- [x] Componente `SessionRow`: linha de histórico com data, score, modo e link de revisão
+- [x] Tela de revisão de sessão passada (`/history/[sessionId]`): replay das respostas e feedback
+- [x] Componente `TopicMasteryCard`: card por tópico com % de acerto e badge de nível
+- [x] Componente `StreakCalendar`: calendário de atividade estilo GitHub contributions (12 semanas)
+- [x] Componente `AchievementBadge`: medalhas desbloqueadas/bloqueadas com glow e cadeado
+- [x] Seção de conquistas e domínio por tópico integrada no /dashboard
+- [x] Dados mockados com 12 sessões fictícias para testar todos os estados visuais
 
 **Commit final:**
 ```
@@ -159,10 +188,10 @@ feat: UI de histórico e progresso — gráficos, streak calendar, conquistas e 
 **Objetivo:** Autenticação real com Supabase — login, cadastro, sessão persistente e rotas protegidas.
 
 ### Entregas
-- [ ] Instalar `@supabase/supabase-js` e `@supabase/ssr`
-- [ ] Criar `lib/supabase/client.ts` (`createBrowserClient`)
-- [ ] Criar `lib/supabase/server.ts` (`createServerClient` com cookies)
-- [ ] Criar `lib/supabase/admin.ts` (service role para operações admin)
+- [x] Instalar `@supabase/supabase-js` e `@supabase/ssr`
+- [x] Criar `lib/supabase/client.ts` (`createBrowserClient`)
+- [x] Criar `lib/supabase/server.ts` (`createServerClient` com cookies)
+- [x] Criar `lib/supabase/admin.ts` (service role para operações admin)
 - [ ] Criar `src/middleware.ts` para renovação automática de sessão
 - [ ] Criar projeto no Supabase e configurar env vars
 - [ ] Conectar formulário de cadastro à action `features/auth/actions.ts`

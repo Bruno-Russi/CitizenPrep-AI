@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { ChevronRight, CheckCircle } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { ChevronRight, CheckCircle2 } from "lucide-react";
 
 const topics = [
   {
@@ -10,9 +8,6 @@ const topics = [
     description: "Poderes executivo, legislativo e judiciário",
     questions: 23,
     progress: 80,
-    color: "bg-[--color-sky]",
-    lightColor: "bg-[--color-sky]/10",
-    textColor: "text-[--color-sky]",
   },
   {
     id: "history",
@@ -20,9 +15,6 @@ const topics = [
     description: "Da independência até os dias atuais",
     questions: 27,
     progress: 55,
-    color: "bg-[--color-sage]",
-    lightColor: "bg-[--color-sage]/10",
-    textColor: "text-[--color-sage]",
   },
   {
     id: "rights",
@@ -30,9 +22,6 @@ const topics = [
     description: "Direitos dos cidadãos e responsabilidades",
     questions: 14,
     progress: 90,
-    color: "bg-[--color-amber]",
-    lightColor: "bg-amber-50",
-    textColor: "text-amber-600",
   },
   {
     id: "judiciary",
@@ -40,9 +29,6 @@ const topics = [
     description: "Cortes federais, Suprema Corte e leis",
     questions: 18,
     progress: 40,
-    color: "bg-[--color-navy]",
-    lightColor: "bg-[--color-navy]/10",
-    textColor: "text-[--color-navy]",
   },
   {
     id: "geography",
@@ -50,9 +36,6 @@ const topics = [
     description: "Estados, capitais, bandeira e hino",
     questions: 12,
     progress: 65,
-    color: "bg-purple-500",
-    lightColor: "bg-purple-50",
-    textColor: "text-purple-600",
   },
   {
     id: "economy",
@@ -60,79 +43,131 @@ const topics = [
     description: "Sistema econômico, população e cultura",
     questions: 6,
     progress: 20,
-    color: "bg-rose-500",
-    lightColor: "bg-rose-50",
-    textColor: "text-rose-600",
   },
 ];
 
+function masteryLabel(progress: number): { label: string; color: string; bg: string; border: string } {
+  if (progress >= 80) return { label: "Dominado", color: "#34D399", bg: "rgba(16,185,129,0.1)", border: "rgba(16,185,129,0.25)" };
+  if (progress >= 50) return { label: "Em progresso", color: "#60A5FA", bg: "rgba(59,130,246,0.1)", border: "rgba(59,130,246,0.25)" };
+  return { label: "Iniciante", color: "#9CA3AF", bg: "rgba(107,114,128,0.1)", border: "rgba(107,114,128,0.2)" };
+}
+
+function progressGradient(progress: number): string {
+  if (progress >= 80) return "linear-gradient(90deg, #10B981, #06B6D4)";
+  if (progress >= 50) return "linear-gradient(90deg, #3B82F6, #06B6D4)";
+  return "linear-gradient(90deg, #6B7280, #3B82F6)";
+}
+
 export default function PracticePage() {
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-[--color-navy]">Praticar</h1>
-        <p className="text-[--color-gray-secondary] text-sm mt-1">
+    <div className="max-w-3xl mx-auto space-y-7">
+
+      {/* Header */}
+      <div className="animate-fade-up">
+        <h1 className="text-[28px] font-bold text-white leading-tight tracking-tight">
+          Praticar por Tópico
+        </h1>
+        <p className="text-white/45 text-sm mt-1">
           Escolha um tópico para praticar as perguntas da entrevista USCIS.
         </p>
       </div>
 
-      {/* Resumo */}
-      <div className="grid grid-cols-3 gap-3">
+      {/* Summary chips */}
+      <div className="flex items-center gap-3 flex-wrap animate-fade-up animation-delay-100">
         {[
-          { label: "Total de perguntas", value: "100" },
-          { label: "Dominadas", value: "38" },
-          { label: "Para revisar", value: "62" },
+          { label: "Total de perguntas", value: "100", color: "#60A5FA", bg: "rgba(59,130,246,0.1)", border: "rgba(59,130,246,0.2)" },
+          { label: "Dominadas", value: "38", color: "#34D399", bg: "rgba(16,185,129,0.1)", border: "rgba(16,185,129,0.2)" },
+          { label: "Para revisar", value: "62", color: "#9CA3AF", bg: "rgba(107,114,128,0.08)", border: "rgba(107,114,128,0.15)" },
         ].map((s) => (
-          <div key={s.label} className="bg-white rounded-xl border border-border p-4 text-center">
-            <p className="text-xl font-bold text-[--color-navy]">{s.value}</p>
-            <p className="text-xs text-[--color-gray-secondary] mt-0.5">{s.label}</p>
+          <div
+            key={s.label}
+            className="flex items-center gap-2 px-4 py-2 rounded-full"
+            style={{ background: s.bg, border: `1px solid ${s.border}` }}
+          >
+            <span className="text-base font-bold font-mono" style={{ color: s.color }}>
+              {s.value}
+            </span>
+            <span className="text-xs font-medium text-white/50">{s.label}</span>
           </div>
         ))}
       </div>
 
-      {/* Grid de tópicos */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {topics.map((topic) => (
-          <Link key={topic.id} href={`/practice/${topic.id}`}>
-            <Card className="hover:shadow-md transition-all cursor-pointer group hover:border-[--color-sky]/30 h-full">
-              <CardContent className="pt-5 space-y-4">
+      {/* Topic grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 animate-fade-up animation-delay-200">
+        {topics.map((topic) => {
+          const mastery = masteryLabel(topic.progress);
+          const mastered = topic.progress >= 80;
+          return (
+            <Link key={topic.id} href={`/practice/${topic.id}`}>
+              <div
+                className="group rounded-xl p-5 cursor-pointer transition-all h-full flex flex-col gap-4 hover:border-blue-500/25 hover:shadow-[0_4px_24px_rgba(59,130,246,0.08)]"
+                style={{
+                  background: "#111827",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                }}
+              >
+                {/* Top row */}
                 <div className="flex items-start justify-between">
-                  <div className={`w-10 h-10 rounded-xl ${topic.lightColor} flex items-center justify-center`}>
-                    <div className={`w-4 h-4 rounded-full ${topic.color}`} />
-                  </div>
-                  {topic.progress >= 80 && (
-                    <CheckCircle size={16} className="text-[--color-sage]" />
+                  <span
+                    className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
+                    style={{
+                      color: mastery.color,
+                      background: mastery.bg,
+                      border: `1px solid ${mastery.border}`,
+                    }}
+                  >
+                    {mastery.label}
+                  </span>
+                  {mastered && (
+                    <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
                   )}
                 </div>
 
-                <div>
-                  <p className="font-semibold text-[--color-navy]">{topic.label}</p>
-                  <p className="text-xs text-[--color-gray-secondary] mt-0.5 leading-relaxed">{topic.description}</p>
+                {/* Title */}
+                <div className="flex-1">
+                  <p className="font-semibold text-white leading-snug text-base">
+                    {topic.label}
+                  </p>
+                  <p className="text-xs text-white/40 mt-1 leading-relaxed">
+                    {topic.description}
+                  </p>
                 </div>
 
+                {/* Progress */}
                 <div className="space-y-1.5">
-                  <div className="flex justify-between">
-                    <span className="text-xs text-[--color-gray-secondary]">{topic.questions} perguntas</span>
-                    <span className={`text-xs font-medium ${topic.textColor}`}>{topic.progress}%</span>
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-xs text-white/35">
+                      {topic.questions} perguntas
+                    </span>
+                    <span className="text-xs font-mono font-medium text-white/60">
+                      {topic.progress}%
+                    </span>
                   </div>
-                  <div className="h-1.5 bg-border rounded-full overflow-hidden">
+                  <div
+                    className="h-1.5 rounded-full overflow-hidden"
+                    style={{ background: "rgba(255,255,255,0.06)" }}
+                  >
                     <div
-                      className={`h-full rounded-full ${topic.color} transition-all`}
-                      style={{ width: `${topic.progress}%` }}
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${topic.progress}%`,
+                        background: progressGradient(topic.progress),
+                      }}
                     />
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <Badge variant="secondary" className="text-xs">
-                    {topic.progress >= 80 ? "Dominado" : topic.progress >= 50 ? "Em progresso" : "Iniciante"}
-                  </Badge>
-                  <ChevronRight size={14} className="text-[--color-gray-secondary] group-hover:text-[--color-sky] transition-colors" />
+                {/* Footer */}
+                <div className="flex justify-end">
+                  <ChevronRight
+                    size={14}
+                    className="text-white/20 group-hover:text-blue-400 transition-colors"
+                  />
                 </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );
