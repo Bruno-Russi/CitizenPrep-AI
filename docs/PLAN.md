@@ -193,15 +193,15 @@ feat: UI de histórico e progresso — gráficos, streak calendar, conquistas e 
 - [x] Criar `lib/supabase/server.ts` (`createServerClient` com cookies)
 - [x] Criar `lib/supabase/admin.ts` (service role para operações admin)
 - [ ] Criar `src/middleware.ts` para renovação automática de sessão
-- [ ] Criar projeto no Supabase e configurar env vars
+- [x] Criar projeto no Supabase e configurar env vars
 - [ ] Conectar formulário de cadastro à action `features/auth/actions.ts`
 - [ ] Conectar formulário de login à action `features/auth/actions.ts`
 - [ ] Implementar fluxo de recuperação de senha (magic link via Supabase)
 - [ ] Implementar confirmação de e-mail (redirect para `/confirm`)
 - [ ] Proteger rotas `(dashboard)` — redirecionar para login se sem sessão
 - [ ] Redirecionar usuário autenticado que tenta acessar `(auth)` para `/dashboard`
-- [ ] Criar tabela `profiles` no Supabase (id, name, email, created_at, language)
-- [ ] Popular `profiles` automaticamente via trigger no Supabase após signup
+- [x] Criar tabela `profiles` no Supabase (id, name, email, created_at, language)
+- [x] Popular `profiles` automaticamente via trigger no Supabase após signup
 - [ ] Substituir dados mockados do header/sidebar pelo nome real do usuário
 
 **Commit final:**
@@ -217,15 +217,15 @@ feat: auth backend — Supabase Auth integrado, sessão persistente e rotas prot
 **Objetivo:** Schema completo do banco de dados + banco de 100 perguntas USCIS populado.
 
 ### Entregas
-- [ ] Criar migration: tabela `civics_questions` (id, question, answers[], category, format, active)
-- [ ] Criar migration: tabela `sessions` (id, user_id, mode, format, score, passed, started_at, ended_at)
-- [ ] Criar migration: tabela `session_answers` (id, session_id, question_id, transcript, correct, feedback)
-- [ ] Criar migration: tabela `user_progress` (user_id, question_id, attempts, correct_count, last_seen)
-- [ ] Criar migration: tabela `streaks` (user_id, current_streak, longest_streak, last_activity_date)
-- [ ] Configurar Row Level Security (RLS) em todas as tabelas
+- [x] Criar migration: tabela `civics_questions` (id, question, answers[], category, format, active)
+- [x] Criar migration: tabela `sessions` (id, user_id, mode, format, score, passed, started_at, ended_at)
+- [x] Criar migration: tabela `session_answers` (id, session_id, question_id, transcript, correct, feedback)
+- [x] Criar migration: tabela `user_progress` (user_id, question_id, attempts, correct_count, last_seen)
+- [x] Criar migration: tabela `streaks` (user_id, current_streak, longest_streak, last_activity_date)
+- [x] Configurar Row Level Security (RLS) em todas as tabelas
 - [ ] Popular tabela `civics_questions` com as 100 perguntas oficiais USCIS (formato padrão)
 - [ ] Popular tabela `civics_questions` com as 128 perguntas do formato 2025
-- [ ] Gerar tipos TypeScript via `supabase gen types typescript > src/types/database.ts`
+- [x] Gerar tipos TypeScript via `supabase gen types typescript > src/types/supabase.ts`
 - [ ] Criar queries reutilizáveis em `lib/supabase/queries.ts`
 - [ ] Criar `features/civics/` com funções para buscar perguntas aleatórias por formato e categoria
 
