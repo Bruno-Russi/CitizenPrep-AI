@@ -8,9 +8,9 @@ import {
   Mic,
   History,
   Settings,
-  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { UserButton } from "./user-button";
 
 const links = [
   { href: "/dashboard",  label: "Dashboard", icon: LayoutDashboard },
@@ -20,7 +20,11 @@ const links = [
   { href: "/settings",   label: "Config",    icon: Settings },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  user: { name: string; email: string; initials: string };
+}
+
+export function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -112,31 +116,7 @@ export function Sidebar() {
 
       {/* User */}
       <div className="p-3 pb-5">
-        <div
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all group"
-          style={{ border: "1px solid transparent" }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLElement).style.background = "";
-          }}
-        >
-          <div
-            className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold text-white"
-            style={{ background: "linear-gradient(135deg, #3B82F6, #06B6D4)" }}
-          >
-            JD
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-white truncate">John Doe</p>
-            <p className="text-[11px] text-white/35 truncate">john@email.com</p>
-          </div>
-          <LogOut
-            size={13}
-            className="text-white/25 group-hover:text-white/55 shrink-0 transition-colors"
-          />
-        </div>
+        <UserButton {...user} />
       </div>
     </aside>
   );

@@ -188,21 +188,24 @@ feat: UI de histórico e progresso — gráficos, streak calendar, conquistas e 
 **Objetivo:** Autenticação real com Supabase — login, cadastro, sessão persistente e rotas protegidas.
 
 ### Entregas
-- [ ] Instalar `@supabase/supabase-js` e `@supabase/ssr`
-- [ ] Criar `lib/supabase/client.ts` (`createBrowserClient`)
-- [ ] Criar `lib/supabase/server.ts` (`createServerClient` com cookies)
-- [ ] Criar `lib/supabase/admin.ts` (service role para operações admin)
-- [ ] Criar `src/middleware.ts` para renovação automática de sessão
-- [ ] Criar projeto no Supabase e configurar env vars
-- [ ] Conectar formulário de cadastro à action `features/auth/actions.ts`
-- [ ] Conectar formulário de login à action `features/auth/actions.ts`
-- [ ] Implementar fluxo de recuperação de senha (magic link via Supabase)
-- [ ] Implementar confirmação de e-mail (redirect para `/confirm`)
-- [ ] Proteger rotas `(dashboard)` — redirecionar para login se sem sessão
-- [ ] Redirecionar usuário autenticado que tenta acessar `(auth)` para `/dashboard`
-- [ ] Criar tabela `profiles` no Supabase (id, name, email, created_at, language)
-- [ ] Popular `profiles` automaticamente via trigger no Supabase após signup
-- [ ] Substituir dados mockados do header/sidebar pelo nome real do usuário
+- [x] Instalar `@supabase/supabase-js` e `@supabase/ssr`
+- [x] Criar `lib/supabase/client.ts` (`createBrowserClient`)
+- [x] Criar `lib/supabase/server.ts` (`createServerClient` com cookies)
+- [x] Criar `lib/supabase/admin.ts` (service role para operações admin)
+- [x] Criar `src/proxy.ts` para renovação automática de sessão (Next.js 16 — renomeado de middleware)
+- [x] Criar projeto no Supabase e configurar env vars
+- [x] Conectar formulário de cadastro à action `features/auth/actions.ts`
+- [x] Conectar formulário de login à action `features/auth/actions.ts`
+- [x] Implementar fluxo de recuperação de senha (magic link via Supabase)
+- [x] Implementar confirmação de e-mail (redirect para `/confirm` ou `/onboarding` se auto-confirm)
+- [x] Proteger rotas `(dashboard)` — redirecionar para login se sem sessão
+- [x] Redirecionar usuário autenticado que tenta acessar `(auth)` para `/dashboard`
+- [x] Criar tabela `profiles` no Supabase (id, name, email, created_at, language)
+- [x] Popular `profiles` automaticamente via trigger no Supabase após signup
+- [x] Substituir dados mockados do header/sidebar pelo nome real do usuário
+- [x] Criar `src/app/auth/callback/route.ts` — handler de OAuth/magic link
+- [x] Conectar onboarding ao banco (upsert em `profiles` + `user_metadata`)
+- [x] Aplicar best practices de RLS e índices FK (migration `20260422000006`)
 
 **Commit final:**
 ```
@@ -217,17 +220,17 @@ feat: auth backend — Supabase Auth integrado, sessão persistente e rotas prot
 **Objetivo:** Schema completo do banco de dados + banco de 100 perguntas USCIS populado.
 
 ### Entregas
-- [ ] Criar migration: tabela `civics_questions` (id, question, answers[], category, format, active)
-- [ ] Criar migration: tabela `sessions` (id, user_id, mode, format, score, passed, started_at, ended_at)
-- [ ] Criar migration: tabela `session_answers` (id, session_id, question_id, transcript, correct, feedback)
-- [ ] Criar migration: tabela `user_progress` (user_id, question_id, attempts, correct_count, last_seen)
-- [ ] Criar migration: tabela `streaks` (user_id, current_streak, longest_streak, last_activity_date)
-- [ ] Configurar Row Level Security (RLS) em todas as tabelas
-- [ ] Popular tabela `civics_questions` com as 100 perguntas oficiais USCIS (formato padrão)
-- [ ] Popular tabela `civics_questions` com as 128 perguntas do formato 2025
-- [ ] Gerar tipos TypeScript via `supabase gen types typescript > src/types/database.ts`
-- [ ] Criar queries reutilizáveis em `lib/supabase/queries.ts`
-- [ ] Criar `features/civics/` com funções para buscar perguntas aleatórias por formato e categoria
+- [x] Criar migration: tabela `civics_questions` (id, question, answers[], category, format, active)
+- [x] Criar migration: tabela `sessions` (id, user_id, mode, format, score, passed, started_at, ended_at)
+- [x] Criar migration: tabela `session_answers` (id, session_id, question_id, transcript, correct, feedback)
+- [x] Criar migration: tabela `user_progress` (user_id, question_id, attempts, correct_count, last_seen)
+- [x] Criar migration: tabela `streaks` (user_id, current_streak, longest_streak, last_activity_date)
+- [x] Configurar Row Level Security (RLS) em todas as tabelas
+- [x] Popular tabela `civics_questions` com as 100 perguntas oficiais USCIS (formato padrão)
+- [x] Popular tabela `civics_questions` com as 128 perguntas do formato 2025
+- [x] Gerar tipos TypeScript via `supabase gen types typescript > src/types/supabase.ts`
+- [x] Criar queries reutilizáveis em `lib/supabase/queries.ts`
+- [x] Criar `features/civics/` com funções para buscar perguntas aleatórias por formato e categoria
 
 **Commit final:**
 ```
@@ -241,22 +244,28 @@ feat: schema do banco de dados e banco de perguntas USCIS (100 + 128 perguntas p
 **Branch:** `feat/interview-engine`
 **Objetivo:** Loop completo de entrevista funcionando — voz do oficial → gravação do usuário → transcrição → avaliação → próxima pergunta.
 
+### Decisões de implementação
+- TTS: OpenAI tts-1 (voz `echo`) — áudios das perguntas pré-gerados via `npm run seed:audios` e servidos do Supabase Storage CDN (zero chamadas OpenAI em runtime para perguntas do banco)
+- STT: OpenAI Whisper (`whisper-1`)
+- Avaliação semântica: GPT-4o-mini — retorna `{ correct, feedback, tip }`
+- Voz única: `echo` para todos os usuários (seleção de voz removida da UI)
+
 ### Entregas
-- [ ] Criar `lib/api/elevenlabs.ts`: client TTS com seleção de voz (masculina/feminina)
-- [ ] Criar `lib/api/openai.ts`: client Whisper para transcrição de áudio
-- [ ] Criar `lib/api/anthropic.ts`: client Claude para avaliação semântica
-- [ ] Criar `app/api/tts/route.ts`: proxy server-side para ElevenLabs (protege a chave)
-- [ ] Criar `app/api/speech/transcribe/route.ts`: proxy server-side para Whisper
-- [ ] Criar `features/speech/hooks/useAudioRecorder.ts`: hook de gravação via MediaRecorder API
-- [ ] Criar `features/speech/hooks/useTTS.ts`: hook para reproduzir áudio do oficial
-- [ ] Criar `features/evaluation/actions.ts`: server action que chama Claude e retorna `{ correct, feedback, tip }`
-- [ ] Criar `features/interview/hooks/useInterviewSession.ts`: orquestra todo o fluxo (estado da máquina)
-- [ ] Integrar `useInterviewSession` na tela `/simulation/[sessionId]`
-- [ ] Salvar sessão e respostas no banco ao final da entrevista
-- [ ] Implementar lógica de aprovação (6/10 corretas = passed)
-- [ ] Tela de resultado com dados reais da sessão
-- [ ] Tratar erros de microfone negado, timeout de API, sem conexão
-- [ ] Testar fluxo completo end-to-end (modo Prática e modo Simulação)
+- [x] Criar `scripts/seed-audios.ts`: gera MP3s via OpenAI tts-1 e faz upload para Supabase Storage (idempotente)
+- [x] Criar migration `20260422000009`: colunas `audio_url_onyx`/`audio_url_nova` + bucket `question-audios` com RLS
+- [x] Criar `app/api/tts/route.ts`: TTS dinâmico (só saudações) com defesa em profundidade — rejeita textos de perguntas do banco
+- [x] Criar `app/api/speech/transcribe/route.ts`: proxy Whisper autenticado
+- [x] Criar `features/speech/hooks/useAudioRecorder.ts`: hook MediaRecorder com transcribe integrado
+- [x] Criar `features/speech/hooks/useTTS.ts`: `playQuestionAudio` (CDN) + `speakDynamic` (/api/tts)
+- [x] Criar `features/evaluation/actions.ts`: avaliação semântica via GPT-4o-mini com fallback exact-match
+- [x] Criar `features/interview/hooks/useInterviewSession.ts`: orquestrador completo (idle→play→record→eval→result)
+- [x] Criar `features/interview/actions.ts`: `startSession`, `saveAnswer`, `finalizeSession`
+- [x] Integrar na tela `/simulation/[sessionId]` com dados reais do banco
+- [x] Salvar sessão e respostas no banco (`sessions`, `session_answers`, `user_progress`)
+- [x] Implementar lógica de aprovação (6/10 corretas = passed)
+- [x] Modo Simulação: avança sempre para a próxima pergunta (acerto ou erro)
+- [x] Modo Prática: repete a mesma pergunta até acertar
+- [x] Tela de resultado com score real da sessão
 
 **Commit final:**
 ```
