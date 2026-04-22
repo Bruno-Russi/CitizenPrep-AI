@@ -1,17 +1,21 @@
+import { useId } from "react";
 import { cn } from "@/lib/utils";
 
 interface FormFieldProps {
   label: string;
   error?: string;
-  children: React.ReactNode;
+  children: (id: string) => React.ReactNode;
   className?: string;
 }
 
 export function FormField({ label, error, children, className }: FormFieldProps) {
+  const id = useId();
   return (
     <div className={cn("space-y-1.5", className)}>
-      <label className="block text-sm font-medium text-[--color-navy]">{label}</label>
-      {children}
+      <label htmlFor={id} className="block text-sm font-medium text-[--color-navy]">
+        {label}
+      </label>
+      {children(id)}
       {error && (
         <p className="text-xs text-red-500 flex items-center gap-1">
           <span aria-hidden="true">⚠</span>

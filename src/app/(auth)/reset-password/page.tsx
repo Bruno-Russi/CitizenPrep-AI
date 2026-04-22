@@ -36,7 +36,7 @@ export default function ResetPasswordPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  async function onSubmit() {
+  async function onSubmit(_data: FormData) {
     // M6 — atualizar senha via Supabase Auth
     await new Promise((r) => setTimeout(r, 1000));
     setDone(true);
@@ -72,21 +72,27 @@ export default function ResetPasswordPage() {
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
         <FormField label="Nova senha" error={errors.password?.message}>
-          <PasswordInput
-            {...register("password")}
-            placeholder="Mínimo 8 caracteres"
-            autoComplete="new-password"
-            error={!!errors.password}
-          />
+          {(id) => (
+            <PasswordInput
+              id={id}
+              {...register("password")}
+              placeholder="Mínimo 8 caracteres"
+              autoComplete="new-password"
+              error={!!errors.password}
+            />
+          )}
         </FormField>
 
         <FormField label="Confirmar nova senha" error={errors.confirmPassword?.message}>
-          <PasswordInput
-            {...register("confirmPassword")}
-            placeholder="Repita a nova senha"
-            autoComplete="new-password"
-            error={!!errors.confirmPassword}
-          />
+          {(id) => (
+            <PasswordInput
+              id={id}
+              {...register("confirmPassword")}
+              placeholder="Repita a nova senha"
+              autoComplete="new-password"
+              error={!!errors.confirmPassword}
+            />
+          )}
         </FormField>
 
         <SubmitButton loading={isSubmitting}>Redefinir senha</SubmitButton>

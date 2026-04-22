@@ -23,10 +23,9 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  async function onSubmit(data: FormData) {
+  async function onSubmit(_data: FormData) {
     // M6 — conectar ao Supabase Auth
     await new Promise((r) => setTimeout(r, 1000));
-    console.log(data);
   }
 
   return (
@@ -44,29 +43,32 @@ export default function LoginPage() {
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
         <FormField label="E-mail" error={errors.email?.message}>
-          <Input
-            {...register("email")}
-            type="email"
-            placeholder="voce@email.com"
-            autoComplete="email"
-            error={!!errors.email}
-          />
+          {(id) => (
+            <Input
+              id={id}
+              {...register("email")}
+              type="email"
+              placeholder="voce@email.com"
+              autoComplete="email"
+              error={!!errors.email}
+            />
+          )}
         </FormField>
 
         <FormField label="Senha" error={errors.password?.message}>
-          <PasswordInput
-            {...register("password")}
-            placeholder="Sua senha"
-            autoComplete="current-password"
-            error={!!errors.password}
-          />
+          {(id) => (
+            <PasswordInput
+              id={id}
+              {...register("password")}
+              placeholder="Sua senha"
+              autoComplete="current-password"
+              error={!!errors.password}
+            />
+          )}
         </FormField>
 
         <div className="flex justify-end">
-          <Link
-            href="/forgot-password"
-            className="text-xs text-[--color-sky] hover:underline"
-          >
+          <Link href="/forgot-password" className="text-xs text-[--color-sky] hover:underline">
             Esqueci minha senha
           </Link>
         </div>

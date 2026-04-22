@@ -34,10 +34,9 @@ export default function SignupPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  async function onSubmit(data: FormData) {
+  async function onSubmit(_data: FormData) {
     // M6 — conectar ao Supabase Auth
     await new Promise((r) => setTimeout(r, 1000));
-    console.log(data);
   }
 
   return (
@@ -55,41 +54,53 @@ export default function SignupPage() {
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
         <FormField label="Nome completo" error={errors.name?.message}>
-          <Input
-            {...register("name")}
-            type="text"
-            placeholder="Seu nome"
-            autoComplete="name"
-            error={!!errors.name}
-          />
+          {(id) => (
+            <Input
+              id={id}
+              {...register("name")}
+              type="text"
+              placeholder="Seu nome"
+              autoComplete="name"
+              error={!!errors.name}
+            />
+          )}
         </FormField>
 
         <FormField label="E-mail" error={errors.email?.message}>
-          <Input
-            {...register("email")}
-            type="email"
-            placeholder="voce@email.com"
-            autoComplete="email"
-            error={!!errors.email}
-          />
+          {(id) => (
+            <Input
+              id={id}
+              {...register("email")}
+              type="email"
+              placeholder="voce@email.com"
+              autoComplete="email"
+              error={!!errors.email}
+            />
+          )}
         </FormField>
 
         <FormField label="Senha" error={errors.password?.message}>
-          <PasswordInput
-            {...register("password")}
-            placeholder="Mínimo 8 caracteres"
-            autoComplete="new-password"
-            error={!!errors.password}
-          />
+          {(id) => (
+            <PasswordInput
+              id={id}
+              {...register("password")}
+              placeholder="Mínimo 8 caracteres"
+              autoComplete="new-password"
+              error={!!errors.password}
+            />
+          )}
         </FormField>
 
         <FormField label="Confirmar senha" error={errors.confirmPassword?.message}>
-          <PasswordInput
-            {...register("confirmPassword")}
-            placeholder="Repita a senha"
-            autoComplete="new-password"
-            error={!!errors.confirmPassword}
-          />
+          {(id) => (
+            <PasswordInput
+              id={id}
+              {...register("confirmPassword")}
+              placeholder="Repita a senha"
+              autoComplete="new-password"
+              error={!!errors.confirmPassword}
+            />
+          )}
         </FormField>
 
         <SubmitButton loading={isSubmitting} className="mt-2">

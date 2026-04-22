@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  async function onSubmit() {
+  async function onSubmit(_data: FormData) {
     // M6 — enviar magic link via Supabase Auth
     await new Promise((r) => setTimeout(r, 1000));
     setSent(true);
@@ -74,13 +74,16 @@ export default function ForgotPasswordPage() {
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
         <FormField label="E-mail" error={errors.email?.message}>
-          <Input
-            {...register("email")}
-            type="email"
-            placeholder="voce@email.com"
-            autoComplete="email"
-            error={!!errors.email}
-          />
+          {(id) => (
+            <Input
+              id={id}
+              {...register("email")}
+              type="email"
+              placeholder="voce@email.com"
+              autoComplete="email"
+              error={!!errors.email}
+            />
+          )}
         </FormField>
 
         <SubmitButton loading={isSubmitting}>Enviar link de recuperação</SubmitButton>
