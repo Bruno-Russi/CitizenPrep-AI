@@ -6,20 +6,50 @@ interface AuthCardProps {
   children: React.ReactNode;
   footer?: React.ReactNode;
   className?: string;
+  formNumber?: string;
 }
 
-export function AuthCard({ title, description, children, footer, className }: AuthCardProps) {
+export function AuthCard({
+  title,
+  description,
+  children,
+  footer,
+  className,
+  formNumber: _formNumber,
+}: AuthCardProps) {
   return (
-    <div className={cn("bg-white rounded-2xl shadow-sm border border-border p-8 space-y-6", className)}>
+    <div className={cn("space-y-6", className)}>
+      {/* Header */}
       <div className="space-y-1.5">
-        <h1 className="text-2xl font-bold text-[--color-navy]">{title}</h1>
+        <h1 className="text-2xl font-bold text-white leading-tight tracking-tight">
+          {title}
+        </h1>
         {description && (
-          <p className="text-[--color-gray-secondary] text-sm leading-relaxed">{description}</p>
+          <p className="text-sm text-white/50 leading-relaxed">
+            {description}
+          </p>
         )}
       </div>
-      <div>{children}</div>
+
+      {/* Form body */}
+      <div
+        className="rounded-xl p-8 space-y-5"
+        style={{
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(255,255,255,0.08)",
+        }}
+      >
+        {children}
+      </div>
+
+      {/* Footer */}
       {footer && (
-        <div className="text-center text-sm text-[--color-gray-secondary]">{footer}</div>
+        <div
+          className="text-center text-sm text-white/50 pt-5"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}
+        >
+          {footer}
+        </div>
       )}
     </div>
   );
