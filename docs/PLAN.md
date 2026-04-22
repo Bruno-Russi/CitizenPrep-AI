@@ -29,19 +29,19 @@
 **Objetivo:** Projeto Next.js configurado, design system aplicado, estrutura de pastas criada, variáveis de ambiente prontas.
 
 ### Entregas
-- [ ] Inicializar projeto com `create-next-app` (TypeScript, Tailwind, App Router, `src/`)
-- [ ] Instalar e configurar shadcn/ui
-- [ ] Aplicar paleta de cores no `tailwind.config.ts` (navy, sky blue, sage green, amber)
-- [ ] Configurar fonte Inter via `next/font`
-- [ ] Criar variáveis CSS globais em `src/styles/globals.css`
-- [ ] Criar estrutura completa de pastas (`features/`, `lib/`, `components/`, `types/`)
-- [ ] Configurar path alias `@/` no `tsconfig.json`
-- [ ] Criar `lib/env.ts` com validação Zod de todas as variáveis de ambiente
-- [ ] Criar `.env.example` com todas as chaves necessárias
-- [ ] Criar `.env.local` com valores de desenvolvimento
-- [ ] Instalar dependências base: `zod`, `clsx`, `tailwind-merge`, `lucide-react`
-- [ ] Criar `components/providers.tsx` (placeholder vazio)
-- [ ] Confirmar `npm run dev` funcionando sem erros
+- [x] Inicializar projeto com `create-next-app` (TypeScript, Tailwind, App Router, `src/`)
+- [x] Instalar e configurar shadcn/ui
+- [x] Aplicar paleta de cores no `tailwind.config.ts` (navy, sky blue, sage green, amber)
+- [x] Configurar fonte Inter via `next/font`
+- [x] Criar variáveis CSS globais em `src/styles/globals.css`
+- [x] Criar estrutura completa de pastas (`features/`, `lib/`, `components/`, `types/`)
+- [x] Configurar path alias `@/` no `tsconfig.json`
+- [x] Criar `lib/env.ts` com validação Zod de todas as variáveis de ambiente
+- [x] Criar `.env.example` com todas as chaves necessárias
+- [x] Criar `.env.local` com valores de desenvolvimento
+- [x] Instalar dependências base: `zod`, `clsx`, `tailwind-merge`, `lucide-react`
+- [x] Criar `components/providers.tsx` (placeholder vazio)
+- [x] Confirmar `npm run dev` funcionando sem erros
 
 **Commit final:**
 ```
