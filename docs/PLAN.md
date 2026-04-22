@@ -56,17 +56,17 @@ feat: setup inicial — Next.js 15, Tailwind, shadcn/ui, design system e estrutu
 **Objetivo:** Telas de autenticação com design final, sem backend ainda — apenas UI navegável.
 
 ### Entregas
-- [ ] Criar layout `src/app/(auth)/layout.tsx` (split screen: visual esquerda, form direita)
-- [ ] Tela de Login: e-mail + senha, link "esqueci a senha", link para cadastro
-- [ ] Tela de Cadastro: nome, e-mail, senha, confirmação de senha
-- [ ] Tela de Recuperação de Senha: campo de e-mail, feedback de envio
-- [ ] Tela de Redefinição de Senha: nova senha + confirmação
-- [ ] Tela de Confirmação de E-mail: página de espera/sucesso
-- [ ] Componentes de formulário reutilizáveis (`FormField`, `PasswordInput`, `AuthCard`)
-- [ ] Validação de campos no cliente com react-hook-form + Zod
-- [ ] Estados de loading (botão com spinner)
-- [ ] Estados de erro (mensagens inline)
-- [ ] Responsivo mobile
+- [x] Criar layout `src/app/(auth)/layout.tsx` (split screen: visual esquerda, form direita)
+- [x] Tela de Login: e-mail + senha, link "esqueci a senha", link para cadastro
+- [x] Tela de Cadastro: nome, e-mail, senha, confirmação de senha
+- [x] Tela de Recuperação de Senha: campo de e-mail, feedback de envio
+- [x] Tela de Redefinição de Senha: nova senha + confirmação
+- [x] Tela de Confirmação de E-mail: página de espera/sucesso
+- [x] Componentes de formulário reutilizáveis (`FormField`, `PasswordInput`, `AuthCard`)
+- [x] Validação de campos no cliente com react-hook-form + Zod
+- [x] Estados de loading (botão com spinner)
+- [x] Estados de erro (mensagens inline)
+- [x] Responsivo mobile
 
 **Commit final:**
 ```
@@ -81,19 +81,19 @@ feat: telas de auth — login, cadastro e recuperação de senha (UI)
 **Objetivo:** Todas as telas do app autenticado com dados mockados — navegação completa funcionando.
 
 ### Entregas
-- [ ] Criar layout `src/app/(dashboard)/layout.tsx` com sidebar (desktop) e bottom nav (mobile)
-- [ ] Componente `Sidebar` com links: Dashboard, Praticar, Simular, Histórico, Configurações
-- [ ] Componente `BottomNav` para mobile
-- [ ] Tela Dashboard (`/dashboard`): boas-vindas, streak, XP, próxima sessão, atalhos rápidos
-- [ ] Componente `StreakCard` com contador de dias e chama de progresso
-- [ ] Componente `XPBar` com nível atual e progresso até o próximo
-- [ ] Componente `StatsGrid`: total de simulações, taxa de acerto, perguntas dominadas
-- [ ] Tela Praticar (`/practice`): grid de tópicos (Governo, História, etc.) com % de domínio por tópico
-- [ ] Tela Simular (`/simulation`): escolha do modo (Prática vs Simulação), escolha de voz do oficial
-- [ ] Tela Histórico (`/history`): lista de sessões passadas, gráfico de evolução (recharts)
-- [ ] Tela Configurações (`/settings`): perfil, preferências de voz, idioma
-- [ ] Todos os dados são mockados (arrays estáticos em cada componente)
-- [ ] Responsivo em mobile e desktop
+- [x] Criar layout `src/app/(dashboard)/layout.tsx` com sidebar (desktop) e bottom nav (mobile)
+- [x] Componente `Sidebar` com links: Dashboard, Praticar, Simular, Histórico, Configurações
+- [x] Componente `BottomNav` para mobile
+- [x] Tela Dashboard (`/dashboard`): boas-vindas, streak, XP, próxima sessão, atalhos rápidos
+- [x] Componente `StreakCard` com contador de dias e chama de progresso
+- [x] Componente `XPBar` com nível atual e progresso até o próximo
+- [x] Componente `StatsGrid`: total de simulações, taxa de acerto, perguntas dominadas
+- [x] Tela Praticar (`/practice`): grid de tópicos (Governo, História, etc.) com % de domínio por tópico
+- [x] Tela Simular (`/simulation`): escolha do modo (Prática vs Simulação), escolha de voz do oficial
+- [x] Tela Histórico (`/history`): lista de sessões passadas, gráfico de evolução (recharts)
+- [x] Tela Configurações (`/settings`): perfil, preferências de voz, idioma
+- [x] Todos os dados são mockados (arrays estáticos em cada componente)
+- [x] Responsivo em mobile e desktop
 
 **Commit final:**
 ```
@@ -108,25 +108,27 @@ feat: dashboard UI completo — todas as telas com dados mockados e navegação 
 **Objetivo:** Tela central de simulação com toda a interface de voz — sem integração real com APIs ainda.
 
 ### Entregas
-- [ ] Tela de entrevista (`/simulation/[sessionId]`) com layout fullscreen/foco
-- [ ] Componente `OfficerAvatar`: avatar do oficial com animação de fala (pulse no border)
-- [ ] Componente `AudioWaveform`: animação de onda enquanto o oficial fala ou usuário grava
-- [ ] Componente `RecordButton`: botão central grande com estados (idle → gravando → processando)
-- [ ] Componente `QuestionCard`: exibe a pergunta atual e número (ex: "Pergunta 3 de 10")
-- [ ] Componente `TranscriptBubble`: mostra o que foi transcrito da fala do usuário
-- [ ] Componente `FeedbackOverlay`: overlay de resultado (correto ✓ / incorreto ✗) com animação
-- [ ] Componente `SessionProgress`: barra de progresso (quantas perguntas restam)
-- [ ] Tela de resultado da sessão (`/simulation/[sessionId]/result`): score, aprovado/reprovado, lista de erros
-- [ ] Componente `ResultCard`: card por pergunta com resposta do usuário vs resposta correta
-- [ ] Componente `StudyTip`: dica personalizada baseada nos erros (mockado)
-- [ ] Botão para repetir a pergunta do oficial
-- [ ] Controle de velocidade de fala (lento / normal / rápido) — UI apenas
-- [ ] Responsivo e funcional em mobile (botão de gravação acessível com o polegar)
+- [x] Tela de entrevista (`/simulation/[sessionId]`) com layout fullscreen/foco
+- [x] Componente `OfficerAvatar`: avatar do oficial com animação de fala (pulse no border)
+- [x] Componente `AudioWaveform`: animação de onda enquanto o oficial fala ou usuário grava
+- [x] Componente `RecordButton`: botão central grande com estados (idle → gravando → processando)
+- [x] Componente `QuestionCard`: exibe a pergunta atual e número (ex: "Pergunta 3 de 10")
+- [x] Componente `TranscriptBubble`: mostra o que foi transcrito da fala do usuário
+- [x] Componente `FeedbackOverlay`: overlay de resultado (correto ✓ / incorreto ✗) com animação
+- [x] Componente `SessionProgress`: barra de progresso (quantas perguntas restam)
+- [x] Tela de resultado da sessão (`/simulation/[sessionId]/result`): score, aprovado/reprovado, lista de erros
+- [x] Componente `ResultCard`: card por pergunta com resposta do usuário vs resposta correta
+- [x] Componente `StudyTip`: dica personalizada baseada nos erros (mockado)
+- [x] Botão para repetir a pergunta do oficial
+- [x] Controle de velocidade de fala (lento / normal / rápido) — UI apenas
+- [x] Responsivo e funcional em mobile (botão de gravação acessível com o polegar)
 
 **Commit final:**
 ```
 feat: UI da entrevista — tela de simulação, waveform, gravação, feedback e tela de resultado
 ```
+
+> **Nota:** M2, M3 e M4 foram desenvolvidos juntos na branch `feat/interview-ui` com redesign completo do design system para "Deep Space" — dark mode, Inter font, paleta azul/cyan (#3B82F6/#06B6D4), glassmorphism, animações CSS. O design original (navy/sage/amber) foi substituído integralmente.
 
 ---
 

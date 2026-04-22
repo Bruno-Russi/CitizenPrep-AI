@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -17,6 +19,9 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [serverError, setServerError] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -24,25 +29,38 @@ export default function LoginPage() {
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   async function onSubmit(_data: FormData) {
-    // M6 — conectar ao Supabase Auth
-    await new Promise((r) => setTimeout(r, 1000));
+    setServerError(null);
+    await new Promise((r) => setTimeout(r, 800));
+    router.push("/dashboard");
   }
 
   return (
     <AuthCard
-      title="Entrar na sua conta"
-      description="Acesse sua conta para continuar praticando."
+      title="Acesse sua conta"
+      description="Informe seus dados para continuar praticando."
       footer={
         <>
           Não tem conta?{" "}
-          <Link href="/signup" className="font-medium text-[--color-sky] hover:underline">
+          <Link
+            href="/signup"
+            className="font-semibold text-blue-400 hover:text-blue-300 transition-colors"
+          >
             Criar conta grátis
           </Link>
         </>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
-        <FormField label="E-mail" error={errors.email?.message}>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+        {serverError && (
+          <div
+            className="px-4 py-3 rounded-lg text-sm text-red-400"
+            style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }}
+          >
+            {serverError}
+          </div>
+        )}
+
+        <FormField label="Email" error={errors.email?.message}>
           {(id) => (
             <Input
               id={id}
@@ -60,7 +78,7 @@ export default function LoginPage() {
             <PasswordInput
               id={id}
               {...register("password")}
-              placeholder="Sua senha"
+              placeholder="••••••••"
               autoComplete="current-password"
               error={!!errors.password}
             />
@@ -68,12 +86,17 @@ export default function LoginPage() {
         </FormField>
 
         <div className="flex justify-end">
-          <Link href="/forgot-password" className="text-xs text-[--color-sky] hover:underline">
-            Esqueci minha senha
+          <Link
+            href="/forgot-password"
+            className="text-xs text-white/40 hover:text-blue-400 transition-colors"
+          >
+            Esqueci a senha
           </Link>
         </div>
 
-        <SubmitButton loading={isSubmitting}>Entrar</SubmitButton>
+        <SubmitButton loading={isSubmitting}>
+          Entrar
+        </SubmitButton>
       </form>
     </AuthCard>
   );

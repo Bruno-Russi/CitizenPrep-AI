@@ -23,11 +23,11 @@ export function PasswordInput({ className, ...props }: PasswordInputProps) {
       <button
         type="button"
         onClick={() => setVisible((v) => !v)}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-[--color-gray-secondary] hover:text-[--color-navy] transition-colors p-0.5"
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-colors p-0.5 rounded"
         tabIndex={-1}
         aria-label={visible ? "Ocultar senha" : "Mostrar senha"}
       >
-        {visible ? <EyeOff size={16} /> : <Eye size={16} />}
+        {visible ? <EyeOff size={15} /> : <Eye size={15} />}
       </button>
     </div>
   );

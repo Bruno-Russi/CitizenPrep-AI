@@ -37,7 +37,6 @@ export default function ResetPasswordPage() {
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   async function onSubmit(_data: FormData) {
-    // M6 — atualizar senha via Supabase Auth
     await new Promise((r) => setTimeout(r, 1000));
     setDone(true);
   }
@@ -46,17 +45,19 @@ export default function ResetPasswordPage() {
     return (
       <AuthCard title="Senha redefinida!">
         <div className="text-center space-y-4 py-2">
-          <div className="flex justify-center">
-            <div className="w-16 h-16 rounded-full bg-[--color-sage]/10 flex items-center justify-center">
-              <CheckCircle size={32} className="text-[--color-sage]" />
-            </div>
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center mx-auto"
+            style={{ background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.2)" }}
+          >
+            <CheckCircle size={28} className="text-emerald-400" />
           </div>
-          <p className="text-[--color-gray-secondary] text-sm">
+          <p className="text-sm text-white/60">
             Sua senha foi atualizada com sucesso.
           </p>
           <Link
             href="/login"
-            className="inline-block mt-2 w-full text-center h-11 rounded-lg bg-[--color-navy] text-white font-semibold text-sm leading-[2.75rem] hover:bg-[--color-sky] transition-colors"
+            className="flex items-center justify-center w-full h-11 rounded-lg font-semibold text-sm text-white transition-all"
+            style={{ background: "linear-gradient(135deg, #3B82F6, #2563EB)", boxShadow: "0 1px 20px rgba(59,130,246,0.3)" }}
           >
             Entrar na conta
           </Link>

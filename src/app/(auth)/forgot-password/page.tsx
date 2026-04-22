@@ -27,7 +27,6 @@ export default function ForgotPasswordPage() {
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   async function onSubmit(_data: FormData) {
-    // M6 — enviar magic link via Supabase Auth
     await new Promise((r) => setTimeout(r, 1000));
     setSent(true);
   }
@@ -37,18 +36,21 @@ export default function ForgotPasswordPage() {
       <AuthCard title="Verifique seu e-mail">
         <div className="text-center space-y-4 py-2">
           <div className="flex justify-center">
-            <div className="w-16 h-16 rounded-full bg-[--color-sage]/10 flex items-center justify-center">
-              <CheckCircle size={32} className="text-[--color-sage]" />
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center"
+              style={{ background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.2)" }}
+            >
+              <CheckCircle size={28} className="text-emerald-400" />
             </div>
           </div>
-          <p className="text-[--color-gray-secondary] text-sm leading-relaxed">
+          <p className="text-sm text-white/60 leading-relaxed">
             Enviamos um link de recuperação para{" "}
-            <span className="font-medium text-[--color-navy]">{getValues("email")}</span>.
+            <span className="font-semibold text-white">{getValues("email")}</span>.
             Verifique sua caixa de entrada.
           </p>
           <Link
             href="/login"
-            className="inline-flex items-center gap-1.5 text-sm text-[--color-sky] hover:underline mt-2"
+            className="inline-flex items-center gap-1.5 text-sm text-blue-400 hover:text-blue-300 transition-colors mt-2"
           >
             <ArrowLeft size={14} />
             Voltar para o login
@@ -65,7 +67,7 @@ export default function ForgotPasswordPage() {
       footer={
         <Link
           href="/login"
-          className="inline-flex items-center gap-1.5 text-[--color-sky] hover:underline"
+          className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 transition-colors"
         >
           <ArrowLeft size={14} />
           Voltar para o login
@@ -73,7 +75,7 @@ export default function ForgotPasswordPage() {
       }
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
-        <FormField label="E-mail" error={errors.email?.message}>
+        <FormField label="Email" error={errors.email?.message}>
           {(id) => (
             <Input
               id={id}
