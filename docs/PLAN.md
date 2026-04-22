@@ -226,11 +226,11 @@ feat: auth backend — Supabase Auth integrado, sessão persistente e rotas prot
 - [x] Criar migration: tabela `user_progress` (user_id, question_id, attempts, correct_count, last_seen)
 - [x] Criar migration: tabela `streaks` (user_id, current_streak, longest_streak, last_activity_date)
 - [x] Configurar Row Level Security (RLS) em todas as tabelas
-- [ ] Popular tabela `civics_questions` com as 100 perguntas oficiais USCIS (formato padrão)
-- [ ] Popular tabela `civics_questions` com as 128 perguntas do formato 2025
+- [x] Popular tabela `civics_questions` com as 100 perguntas oficiais USCIS (formato padrão)
+- [x] Popular tabela `civics_questions` com as 128 perguntas do formato 2025
 - [x] Gerar tipos TypeScript via `supabase gen types typescript > src/types/supabase.ts`
-- [ ] Criar queries reutilizáveis em `lib/supabase/queries.ts`
-- [ ] Criar `features/civics/` com funções para buscar perguntas aleatórias por formato e categoria
+- [x] Criar queries reutilizáveis em `lib/supabase/queries.ts`
+- [x] Criar `features/civics/` com funções para buscar perguntas aleatórias por formato e categoria
 
 **Commit final:**
 ```
