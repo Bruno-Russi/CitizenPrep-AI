@@ -1,7 +1,7 @@
 # CitizenPrep AI — Plano de Execução
 
 > Princípio: interface primeiro, backend depois. Cada milestone é um incremento entregável e testável antes de avançar.
-> O app é 100% gratuito na v1 — sem landing page, sem pagamentos, sem planos.
+> O app é 100% gratuito na v1 — sem pagamentos, sem planos pagos ainda.
 
 ---
 
@@ -9,6 +9,7 @@
 
 | # | Nome | Branch | Foco |
 |---|---|---|---|
+| M0 | Landing Page | `feat/landing-page` | Página pública de entrada do produto |
 | M1 | Setup & Fundação | `setup/foundation` | Projeto, design system, estrutura |
 | M2 | Auth UI | `feat/auth-ui` | Login, cadastro, recuperação (telas) |
 | M3 | Dashboard UI | `feat/dashboard-ui` | Home, navegação, telas do app |
@@ -20,6 +21,32 @@
 | M9 | Progresso & Gamificação | `feat/progress-backend` | Histórico real, streak, XP, analytics |
 | M10 | Observabilidade | `feat/observability` | PostHog, Sentry, logs |
 | M11 | Deploy & Produção | `feat/production` | Vercel, env vars, domínio, CI |
+
+---
+
+## M0 — Landing Page
+
+**Branch:** `feat/landing-page`
+**Objetivo:** Página pública de entrada do produto — apresenta o CitizenPrep AI para visitantes não autenticados.
+
+### Entregas
+- [x] Navbar fixa com logo CitizenPrep AI, links de navegação e botão "Começar grátis"
+- [x] Hero com headline de impacto, subtítulo, dois CTAs e terminal animado com métricas live
+- [x] Seção de stats: 94% aprovação, 128 perguntas USCIS, 12 dias de preparo, 1.800+ usuários
+- [x] Seção "Como funciona" com 3 passos (escolha o modo → responda em voz → receba feedback)
+- [x] Grid de 6 funcionalidades principais com cards e tags
+- [x] Tabela de preços: plano Grátis com badge "Somente por enquanto", R$ 0/mês, 8 features
+- [x] CTA final com headline e botão de conversão
+- [x] Footer com logo e links de navegação
+- [x] Ticker animado em CSS puro com métricas em loop infinito
+- [x] Efeito glow nos cards ao hover (CSS-only, sem JavaScript)
+- [x] Totalmente responsivo — mobile e desktop
+- [x] Server Component puro (sem `"use client"`)
+
+**Commit final:**
+```
+feat: landing page pública — hero, stats, funcionalidades, preços e CTA (CitizenPrep AI)
+```
 
 ---
 

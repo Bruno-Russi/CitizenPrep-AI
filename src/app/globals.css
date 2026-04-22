@@ -232,6 +232,30 @@
 .animation-delay-500 { animation-delay: 0.5s; opacity: 0; }
 .animation-delay-600 { animation-delay: 0.6s; opacity: 0; }
 
+/* ── Landing page ticker ── */
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker 28s linear infinite;
+}
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+/* ── Glow border hover (CSS-only) ── */
+.glow-card {
+  position: relative;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.glow-card:hover {
+  border-color: rgba(59,130,246,0.35) !important;
+  box-shadow: 0 0 32px rgba(59,130,246,0.1), inset 0 0 32px rgba(59,130,246,0.03);
+}
+
 /* ── Input overrides ── */
 input[type="text"],
 input[type="email"],
