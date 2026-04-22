@@ -1,3 +1,5 @@
+import { QUESTION_PT } from "@/features/civics/question-translations";
+
 type QuestionCardProps = {
   question: string;
   current: number;
@@ -5,6 +7,8 @@ type QuestionCardProps = {
 };
 
 export function QuestionCard({ question, current, total }: QuestionCardProps) {
+  const questionPt = QUESTION_PT[question];
+
   return (
     <div
       className="w-full rounded-xl p-5 space-y-2 text-center"
@@ -14,6 +18,9 @@ export function QuestionCard({ question, current, total }: QuestionCardProps) {
         Pergunta {current} de {total}
       </p>
       <p className="text-base font-semibold text-white leading-snug">{question}</p>
+      {questionPt && (
+        <p className="text-sm text-white/45 leading-snug">{questionPt}</p>
+      )}
     </div>
   );
 }

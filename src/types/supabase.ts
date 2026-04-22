@@ -46,6 +46,8 @@ export interface CivicsQuestionRow {
   category: CivicsCategory;
   format: CivicsFormat;
   active: boolean;
+  audio_url_onyx: string | null;
+  audio_url_nova: string | null;
   created_at: string;
 }
 

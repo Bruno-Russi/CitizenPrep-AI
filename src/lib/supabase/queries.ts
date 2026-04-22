@@ -8,7 +8,7 @@ export async function getRandomQuestions(format: CivicsFormat, count: number) {
 
   const { data, error } = await supabase
     .from("civics_questions")
-    .select("id, question, answers, category, format")
+    .select("id, question, answers, category, format, audio_url_onyx, audio_url_nova")
     .eq("format", format)
     .eq("active", true)
     .order("id");
@@ -24,7 +24,7 @@ export async function getQuestionsByCategory(format: CivicsFormat, category: Civ
 
   const { data, error } = await supabase
     .from("civics_questions")
-    .select("id, question, answers, category, format")
+    .select("id, question, answers, category, format, audio_url_onyx, audio_url_nova")
     .eq("format", format)
     .eq("category", category)
     .eq("active", true)

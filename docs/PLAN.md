@@ -244,22 +244,28 @@ feat: schema do banco de dados e banco de perguntas USCIS (100 + 128 perguntas p
 **Branch:** `feat/interview-engine`
 **Objetivo:** Loop completo de entrevista funcionando — voz do oficial → gravação do usuário → transcrição → avaliação → próxima pergunta.
 
+### Decisões de implementação
+- TTS: OpenAI tts-1 (voz `echo`) — áudios das perguntas pré-gerados via `npm run seed:audios` e servidos do Supabase Storage CDN (zero chamadas OpenAI em runtime para perguntas do banco)
+- STT: OpenAI Whisper (`whisper-1`)
+- Avaliação semântica: GPT-4o-mini — retorna `{ correct, feedback, tip }`
+- Voz única: `echo` para todos os usuários (seleção de voz removida da UI)
+
 ### Entregas
-- [ ] Criar `lib/api/elevenlabs.ts`: client TTS com seleção de voz (masculina/feminina)
-- [ ] Criar `lib/api/openai.ts`: client Whisper para transcrição de áudio
-- [ ] Criar `lib/api/anthropic.ts`: client Claude para avaliação semântica
-- [ ] Criar `app/api/tts/route.ts`: proxy server-side para ElevenLabs (protege a chave)
-- [ ] Criar `app/api/speech/transcribe/route.ts`: proxy server-side para Whisper
-- [ ] Criar `features/speech/hooks/useAudioRecorder.ts`: hook de gravação via MediaRecorder API
-- [ ] Criar `features/speech/hooks/useTTS.ts`: hook para reproduzir áudio do oficial
-- [ ] Criar `features/evaluation/actions.ts`: server action que chama Claude e retorna `{ correct, feedback, tip }`
-- [ ] Criar `features/interview/hooks/useInterviewSession.ts`: orquestra todo o fluxo (estado da máquina)
-- [ ] Integrar `useInterviewSession` na tela `/simulation/[sessionId]`
-- [ ] Salvar sessão e respostas no banco ao final da entrevista
-- [ ] Implementar lógica de aprovação (6/10 corretas = passed)
-- [ ] Tela de resultado com dados reais da sessão
-- [ ] Tratar erros de microfone negado, timeout de API, sem conexão
-- [ ] Testar fluxo completo end-to-end (modo Prática e modo Simulação)
+- [x] Criar `scripts/seed-audios.ts`: gera MP3s via OpenAI tts-1 e faz upload para Supabase Storage (idempotente)
+- [x] Criar migration `20260422000009`: colunas `audio_url_onyx`/`audio_url_nova` + bucket `question-audios` com RLS
+- [x] Criar `app/api/tts/route.ts`: TTS dinâmico (só saudações) com defesa em profundidade — rejeita textos de perguntas do banco
+- [x] Criar `app/api/speech/transcribe/route.ts`: proxy Whisper autenticado
+- [x] Criar `features/speech/hooks/useAudioRecorder.ts`: hook MediaRecorder com transcribe integrado
+- [x] Criar `features/speech/hooks/useTTS.ts`: `playQuestionAudio` (CDN) + `speakDynamic` (/api/tts)
+- [x] Criar `features/evaluation/actions.ts`: avaliação semântica via GPT-4o-mini com fallback exact-match
+- [x] Criar `features/interview/hooks/useInterviewSession.ts`: orquestrador completo (idle→play→record→eval→result)
+- [x] Criar `features/interview/actions.ts`: `startSession`, `saveAnswer`, `finalizeSession`
+- [x] Integrar na tela `/simulation/[sessionId]` com dados reais do banco
+- [x] Salvar sessão e respostas no banco (`sessions`, `session_answers`, `user_progress`)
+- [x] Implementar lógica de aprovação (6/10 corretas = passed)
+- [x] Modo Simulação: avança sempre para a próxima pergunta (acerto ou erro)
+- [x] Modo Prática: repete a mesma pergunta até acertar
+- [x] Tela de resultado com score real da sessão
 
 **Commit final:**
 ```
