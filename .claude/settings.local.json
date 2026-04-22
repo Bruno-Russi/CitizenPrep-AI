@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(npx skills *)",
-      "Bash(mkdir -p \"c:/Users/bruno/OneDrive/Desktop/Claude/App-Cidadania/.claude/agents\")",
-      "Bash(mkdir -p \"c:/Users/bruno/OneDrive/Desktop/Claude/App-Cidadania/.claude/skills\")"
-    ]
-  }
-}
