@@ -21,6 +21,7 @@ type Props = {
 export function InterviewClient({ sessionId, questions, mode = "simulation" }: Props) {
   const router = useRouter();
   const [hintOpen, setHintOpen] = useState(false);
+  const [aborted, setAborted] = useState(false);
   const {
     currentQuestion,
     questionIndex,
@@ -39,12 +40,12 @@ export function InterviewClient({ sessionId, questions, mode = "simulation" }: P
   // Auto-start audio when a new question becomes active, or when practice mode
   // repeats the same question (phase resets to idle without index changing)
   useEffect(() => {
-    if (questionState.phase === "idle") {
+    if (questionState.phase === "idle" && !aborted) {
       startQuestion();
       setHintOpen(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questionIndex, questionState.phase]);
+  }, [questionIndex, questionState.phase, aborted]);
 
   // Redirect to result when session is complete
   useEffect(() => {
@@ -65,14 +66,14 @@ export function InterviewClient({ sessionId, questions, mode = "simulation" }: P
   const showRecordButton = !isResult && (isAwaitingRecord || isRecording || isProcessing);
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#0A0F1E" }}>
+    <div className="h-[100dvh] flex flex-col overflow-hidden" style={{ background: "#0A0F1E" }}>
       {/* Header */}
       <header
-        className="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 sticky top-0 z-10"
+        className="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 shrink-0"
         style={{ background: "#111827", borderBottom: "1px solid rgba(255,255,255,0.07)" }}
       >
         <button
-          onClick={() => { abort(); router.push("/simulation"); }}
+          onClick={() => { setAborted(true); abort(); router.push("/simulation"); }}
           className="w-9 h-9 rounded-lg flex items-center justify-center"
           style={{ background: "rgba(255,255,255,0.04)" }}
           aria-label="Sair"
@@ -101,10 +102,10 @@ export function InterviewClient({ sessionId, questions, mode = "simulation" }: P
       </header>
 
       {/* Body */}
-      <div className="flex-1 flex flex-col items-center justify-between px-4 py-6 gap-6 max-w-md mx-auto w-full">
+      <div className="flex-1 flex flex-col items-center px-4 py-3 sm:py-6 gap-3 sm:gap-4 max-w-md mx-auto w-full overflow-y-auto">
 
         {/* Officer + question */}
-        <div className="flex flex-col items-center gap-4 w-full">
+        <div className="flex flex-col items-center gap-2 sm:gap-4 w-full">
           <OfficerAvatar name="Agente James" isSpeaking={isSpeaking} />
           <AudioWaveform isActive={isSpeaking} variant="officer" />
           {currentQuestion && (
@@ -176,7 +177,7 @@ export function InterviewClient({ sessionId, questions, mode = "simulation" }: P
           )}
 
           {/* Dica de resposta — só no modo prática, quando aguardando gravação */}
-          {isPractice && isAwaitingRecord && currentQuestion && (
+          {isPractice && (isAwaitingRecord || isRecording) && currentQuestion && (
             <div className="w-full rounded-xl overflow-hidden" style={{ border: "1px solid rgba(245,158,11,0.2)" }}>
               <button
                 type="button"
@@ -210,12 +211,12 @@ export function InterviewClient({ sessionId, questions, mode = "simulation" }: P
           {!isResult && (
             <div className="flex flex-col items-center gap-2">
               {(isSpeaking || questionState.phase === "idle") && (
-                <div className="flex flex-col items-center gap-2 py-4">
+                <div className="flex flex-col items-center gap-1">
                   <div
-                    className="w-20 h-20 rounded-full flex items-center justify-center"
+                    className="w-14 h-14 rounded-full flex items-center justify-center"
                     style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
                   >
-                    <Volume2 size={28} className="text-white/20" />
+                    <Volume2 size={22} className="text-white/20" />
                   </div>
                   <p className="text-xs text-white/35">
                     {isSpeaking ? "Ouça a pergunta..." : "Preparando..."}
