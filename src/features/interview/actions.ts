@@ -2,6 +2,7 @@
 
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getRandomQuestions, getQuestionsByCategory } from "@/lib/supabase/queries";
+import { updateStreak, addXP } from "@/features/progress/actions";
 import type { CivicsFormat, CivicsCategory, SessionMode } from "@/types/supabase";
 
 export type SessionStartResult =
@@ -124,5 +125,13 @@ export async function finalizeSession(
     .eq("id", sessionId)
     .eq("user_id", user.id);
 
-  return error ? { error: (error as { message: string }).message } : {};
+  if (error) return { error: (error as { message: string }).message };
+
+  // Update streak and XP in parallel (non-blocking failures)
+  await Promise.all([
+    updateStreak(user.id).catch(() => null),
+    addXP(user.id, score).catch(() => null),
+  ]);
+
+  return {};
 }

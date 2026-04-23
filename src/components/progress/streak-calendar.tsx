@@ -1,12 +1,12 @@
 "use client";
 
-import { ACTIVITY_DATES } from "@/features/progress/mock-data";
+function localDateStr(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
 
 function getLastNWeeks(n: number) {
   const weeks: string[][] = [];
-  const today = new Date("2026-04-22");
-
-  // Start from the Sunday of the week (n-1) weeks ago
+  const today = new Date();
   const startDate = new Date(today);
   startDate.setDate(today.getDate() - today.getDay() - (n - 1) * 7);
 
@@ -15,8 +15,7 @@ function getLastNWeeks(n: number) {
     for (let d = 0; d < 7; d++) {
       const day = new Date(startDate);
       day.setDate(startDate.getDate() + w * 7 + d);
-      const iso = day.toISOString().split("T")[0];
-      week.push(iso);
+      week.push(localDateStr(day));
     }
     weeks.push(week);
   }
@@ -33,10 +32,17 @@ function getColor(count: number) {
 const DAYS = ["D", "S", "T", "Q", "Q", "S", "S"];
 const MONTHS = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
-export function StreakCalendar() {
-  const weeks = getLastNWeeks(12);
+type Props = {
+  activityDates: Record<string, number>;
+  currentStreak: number;
+  longestStreak: number;
+};
 
-  // Month labels: find first occurrence of each month in the grid
+export function StreakCalendar({ activityDates, currentStreak, longestStreak }: Props) {
+  const weeks = getLastNWeeks(12);
+  const today = localDateStr();
+  const activeDays = Object.keys(activityDates).length;
+
   const monthLabels: { label: string; col: number }[] = [];
   let lastMonth = -1;
   weeks.forEach((week, wi) => {
@@ -59,11 +65,7 @@ export function StreakCalendar() {
         <div className="flex items-center gap-2">
           <span className="text-[10px] text-white/20">menos</span>
           {[0, 1, 2, 3].map((lvl) => (
-            <div
-              key={lvl}
-              className="w-2.5 h-2.5 rounded-sm"
-              style={{ background: getColor(lvl) }}
-            />
+            <div key={lvl} className="w-2.5 h-2.5 rounded-sm" style={{ background: getColor(lvl) }} />
           ))}
           <span className="text-[10px] text-white/20">mais</span>
         </div>
@@ -71,7 +73,6 @@ export function StreakCalendar() {
 
       <div className="overflow-x-auto">
         <div style={{ minWidth: 280 }}>
-          {/* Month labels */}
           <div className="flex mb-1" style={{ paddingLeft: 22 }}>
             {weeks.map((_, wi) => {
               const label = monthLabels.find((m) => m.col === wi);
@@ -83,9 +84,7 @@ export function StreakCalendar() {
             })}
           </div>
 
-          {/* Grid */}
           <div className="flex gap-0">
-            {/* Day labels */}
             <div className="flex flex-col gap-0.5 mr-1 shrink-0">
               {DAYS.map((d, i) => (
                 <div key={i} className="h-3 flex items-center text-[9px] text-white/15 w-4 justify-end">
@@ -94,12 +93,11 @@ export function StreakCalendar() {
               ))}
             </div>
 
-            {/* Weeks */}
             {weeks.map((week, wi) => (
               <div key={wi} className="flex flex-col gap-0.5 flex-1">
                 {week.map((iso) => {
-                  const count = ACTIVITY_DATES[iso] ?? 0;
-                  const isFuture = iso > "2026-04-22";
+                  const count = activityDates[iso] ?? 0;
+                  const isFuture = iso > today;
                   return (
                     <div
                       key={iso}
@@ -118,20 +116,17 @@ export function StreakCalendar() {
         </div>
       </div>
 
-      {/* Stats row */}
       <div className="flex items-center gap-4 mt-4 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="text-center">
-          <p className="text-base font-bold text-white font-mono">7</p>
+          <p className="text-base font-bold text-white font-mono">{currentStreak}</p>
           <p className="text-[10px] text-white/25 mt-0.5">streak atual</p>
         </div>
         <div className="text-center">
-          <p className="text-base font-bold text-white font-mono">14</p>
+          <p className="text-base font-bold text-white font-mono">{longestStreak}</p>
           <p className="text-[10px] text-white/25 mt-0.5">maior streak</p>
         </div>
         <div className="text-center">
-          <p className="text-base font-bold text-white font-mono">
-            {Object.keys(ACTIVITY_DATES).length}
-          </p>
+          <p className="text-base font-bold text-white font-mono">{activeDays}</p>
           <p className="text-[10px] text-white/25 mt-0.5">dias ativos</p>
         </div>
       </div>

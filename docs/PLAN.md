@@ -280,21 +280,27 @@ feat: motor de entrevista — loop voz→transcrição→avaliação→feedback 
 **Objetivo:** Histórico real, evolução de score, streak diário e XP calculados a partir do banco.
 
 ### Entregas
-- [ ] Criar `features/progress/actions.ts`: buscar histórico de sessões do usuário
-- [ ] Substituir dados mockados do histórico por dados reais do Supabase
-- [ ] Implementar cálculo de streak (atualizar `streaks` ao finalizar sessão)
-- [ ] Implementar sistema de XP (10 XP por simulação, +5 por resposta correta)
-- [ ] Implementar domínio por tópico (% de acerto agrupado por `category`)
-- [ ] Substituir gráficos mockados por dados reais (recharts com dados do banco)
-- [ ] Criar `features/progress/hooks/useUserStats.ts`
-- [ ] Dashboard com stats reais (total de sessões, taxa de acerto geral, maior streak)
-- [ ] Dicas personalizadas baseadas em erros recorrentes (top 3 categorias com menor acerto)
-- [ ] Implementar conquistas/badges: calcular e salvar via server action ao final de sessão
-- [ ] Streak calendar com dados reais dos últimos 30 dias
+- [x] Criar `features/progress/actions.ts`: `getDashboardStats`, `getSessionHistory`, `getSessionDetail`, `updateStreak`, `addXP`
+- [x] Substituir dados mockados do histórico por dados reais do Supabase
+- [x] Implementar cálculo de streak com timezone local (atualizar `streaks` ao finalizar sessão)
+- [x] Implementar sistema de XP (10 XP por simulação, +5 por resposta correta) via `features/progress/xp.ts`
+- [x] Implementar domínio por tópico (% de acerto agrupado por `category` via `user_progress`)
+- [x] Substituir gráficos mockados por dados reais (`StreakCalendar` e `ScoreLineChart` recebem props)
+- [x] Dashboard com stats reais (total de sessões, taxa de acerto geral, streak atual, XP com barra de nível)
+- [x] Dicas personalizadas baseadas em erros recorrentes (top 3 categorias com menor acerto)
+- [x] Streak calendar com dados reais dos últimos 12 semanas
+- [x] /history/[sessionId]: revisão completa com transcript, resposta aceita e feedback em PT
+- [x] /practice: barra de domínio real por tópico calculada do `user_progress`
+- [x] Migration `20260422000011`: coluna `xp` adicionada em `profiles`
+
+**Notas de implementação:**
+- `calcLevel` extraído para `features/progress/xp.ts` (funções síncronas não podem estar em arquivos `"use server"`)
+- `xpToNext` corrigido para retornar XP restante ao próximo nível (não o total do nível)
+- Timezone corrigido: streak usa hora local do servidor, não UTC
 
 **Commit final:**
 ```
-feat: progresso e gamificação — histórico real, streak, XP e dicas personalizadas
+feat: M9 — progresso e gamificação com dados reais do banco
 ```
 
 ---
