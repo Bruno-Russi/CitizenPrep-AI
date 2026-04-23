@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Mic, BookOpen, Clock, Target, Loader2 } from "lucide-react";
 import { startSession } from "@/features/interview/actions";
 
@@ -38,8 +38,10 @@ const modes = [
 
 export default function SimulationPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [pending, startTransition] = useTransition();
-  const [selectedMode, setSelectedMode] = useState<"simulation" | "practice">("simulation");
+  const initialMode = searchParams.get("mode") === "practice" ? "practice" : "simulation";
+  const [selectedMode, setSelectedMode] = useState<"simulation" | "practice">(initialMode);
   const [error, setError] = useState<string | null>(null);
 
   const handleStart = () => {
