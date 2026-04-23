@@ -308,24 +308,7 @@ feat: M9 — progresso e gamificação com dados reais do banco
 ## M10 — Observabilidade
 
 **Branch:** `feat/observability`
-**Objetivo:** Analytics de produto e monitoramento de erros configurados e ativos em produção.
-
-### Entregas
-- [ ] Instalar e configurar PostHog (`posthog-js`, provider no `components/providers.tsx`)
-- [ ] Rastrear eventos-chave: `simulation_started`, `simulation_completed`, `answer_recorded`, `practice_started`
-- [ ] Identificar usuário no PostHog após login (`posthog.identify`)
-- [ ] Instalar e configurar Sentry (`@sentry/nextjs`)
-- [ ] Configurar Sentry para capturar erros de API (Whisper, ElevenLabs, Claude)
-- [ ] Criar `sentry.client.config.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`
-- [ ] Adicionar `instrumentation.ts` para Sentry no App Router
-- [ ] Testar captura de erro manual (`Sentry.captureException`)
-- [ ] Verificar eventos chegando no dashboard do PostHog
-- [ ] Configurar alertas de erro no Sentry (e-mail para erros críticos)
-
-**Commit final:**
-```
-feat: observabilidade — PostHog analytics e Sentry error tracking configurados
-```
+**Objetivo:** ~~PostHog + Sentry~~ — decidido usar apenas logs nativos do Vercel + Supabase. Milestone pulada, incorporada ao M11.
 
 ---
 
@@ -335,22 +318,30 @@ feat: observabilidade — PostHog analytics e Sentry error tracking configurados
 **Objetivo:** App em produção no Vercel, domínio configurado, variáveis de ambiente corretas e CI funcionando.
 
 ### Entregas
-- [ ] Criar projeto no Vercel e conectar ao repositório GitHub
-- [ ] Configurar todas as variáveis de ambiente no Vercel (production + preview)
+- [x] Criar projeto no Vercel e conectar ao repositório GitHub
+- [x] Configurar todas as variáveis de ambiente no Vercel (production + preview)
 - [ ] Configurar domínio customizado
-- [ ] Configurar HTTPS automático via Vercel
-- [ ] Atualizar URLs de redirect do Supabase Auth para produção
-- [ ] Executar `supabase db push` para aplicar migrations em produção
-- [ ] Configurar Supabase para o projeto de produção (novo projeto separado do dev)
-- [ ] Verificar `next.config.ts`: otimização de imagens, headers de segurança
-- [ ] Testar fluxo completo end-to-end em produção (cadastro → simulação → resultado)
+- [x] Configurar HTTPS automático via Vercel
+- [x] Atualizar URLs de redirect do Supabase Auth para produção
+- [x] Verificar `next.config.ts`: otimização de imagens, headers de segurança (CSP, HSTS)
+- [x] Testar fluxo completo end-to-end em produção (cadastro → simulação → resultado)
 - [ ] Verificar Lighthouse score (meta: Performance > 85, Accessibility > 90)
-- [ ] Configurar preview deployments para PRs (automático no Vercel)
-- [ ] Criar `README.md` com instruções de setup local para o projeto
+- [x] Configurar preview deployments para PRs (automático no Vercel)
+- [x] Criar `README.md` com instruções de setup local para o projeto
+
+**App em produção:** https://citizenprep-ai.vercel.app
+
+**Notas de implementação:**
+- M10 (Observabilidade) pulado — logs nativos do Vercel e Supabase cobrem o essencial na v1
+- Auditoria de segurança completa: 11 vulnerabilidades corrigidas (3 Critical, 3 High, 5 Medium)
+- `env.ts` com `server-only`, CSP, HSTS, open redirect corrigido, score server-side, rate limit de tamanho no Whisper
+- Settings simplificado: nome/email/nível, mudar senha, sair
+- Dica de resposta colapsável no modo prática
+- Avatar do agente com foto real
 
 **Commit final:**
 ```
-feat: deploy em produção — Vercel, domínio, variáveis de ambiente e fluxo end-to-end validado
+feat: deploy em produção — Vercel, headers de segurança, env vars e fluxo end-to-end validado
 ```
 
 ---
