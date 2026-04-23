@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Flame, Zap, Mic, BookOpen, TrendingUp, ChevronRight, Award, BarChart3, AlertCircle } from "lucide-react";
 import { AchievementBadge } from "@/components/progress/achievement-badge";
 import { getDashboardStats } from "@/features/progress/actions";
-import { ACHIEVEMENTS } from "@/features/progress/mock-data";
+import type { Achievement } from "@/features/progress/mock-data";
 
 export default async function DashboardPage() {
   const stats = await getDashboardStats();
@@ -16,6 +16,57 @@ export default async function DashboardPage() {
   }
 
   const xpPercent = (stats.xpInLevel / stats.xpToNext) * 100;
+
+  const achievements: Achievement[] = [
+    {
+      id: "first-sim",
+      title: "Primeira Simulação",
+      description: "Completou sua primeira entrevista simulada",
+      icon: "🎯",
+      unlocked: stats.totalSessions >= 1,
+      unlockedAt: stats.totalSessions >= 1 ? "Desbloqueado" : undefined,
+    },
+    {
+      id: "streak-7",
+      title: "Semana Perfeita",
+      description: "7 dias consecutivos de prática",
+      icon: "🔥",
+      unlocked: stats.longestStreak >= 7,
+      unlockedAt: stats.longestStreak >= 7 ? "Desbloqueado" : undefined,
+    },
+    {
+      id: "first-pass",
+      title: "Aprovado!",
+      description: "Passou em uma simulação com 60%+",
+      icon: "✅",
+      unlocked: stats.recentScores.some((s) => s.passed),
+      unlockedAt: stats.recentScores.some((s) => s.passed) ? "Desbloqueado" : undefined,
+    },
+    {
+      id: "perfect",
+      title: "Nota Máxima",
+      description: "10/10 em uma simulação",
+      icon: "⭐",
+      unlocked: stats.recentScores.some((s) => s.score === 100),
+      unlockedAt: stats.recentScores.some((s) => s.score === 100) ? "Desbloqueado" : undefined,
+    },
+    {
+      id: "streak-30",
+      title: "Mês de Dedicação",
+      description: "30 dias consecutivos de prática",
+      icon: "🏆",
+      unlocked: stats.longestStreak >= 30,
+      unlockedAt: stats.longestStreak >= 30 ? "Desbloqueado" : undefined,
+    },
+    {
+      id: "master",
+      title: "Mestre da Cidadania",
+      description: "100% de domínio em todos os tópicos",
+      icon: "🎓",
+      unlocked: stats.dominated >= 100,
+      unlockedAt: stats.dominated >= 100 ? "Desbloqueado" : undefined,
+    },
+  ];
 
   return (
     <div className="max-w-5xl mx-auto space-y-7">
@@ -243,12 +294,12 @@ export default async function DashboardPage() {
             <span className="text-sm font-semibold text-white">Conquistas</span>
           </div>
           <span className="text-[11px] text-white/30">
-            {ACHIEVEMENTS.filter((a) => a.unlocked).length}/{ACHIEVEMENTS.length}
+            {achievements.filter((a) => a.unlocked).length}/{achievements.length}
           </span>
         </div>
         <div className="px-5 py-5">
           <div className="grid grid-cols-6 gap-3">
-            {ACHIEVEMENTS.map((a) => (
+            {achievements.map((a) => (
               <AchievementBadge key={a.id} achievement={a} size="sm" />
             ))}
           </div>
