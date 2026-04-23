@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "lucide-react";
+import Image from "next/image";
 
 type OfficerAvatarProps = {
   name: string;
@@ -24,16 +24,19 @@ export function OfficerAvatar({ name, isSpeaking }: OfficerAvatarProps) {
           </>
         )}
         <div
-          className="relative w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300"
+          className="relative w-24 h-24 rounded-full overflow-hidden transition-all duration-300"
           style={
             isSpeaking
-              ? { background: "linear-gradient(135deg, #3B82F6, #06B6D4)", boxShadow: "0 0 32px rgba(59,130,246,0.35)" }
-              : { background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }
+              ? { boxShadow: "0 0 32px rgba(59,130,246,0.45)", outline: "2px solid rgba(59,130,246,0.5)" }
+              : { outline: "2px solid rgba(255,255,255,0.08)" }
           }
         >
-          <User
-            size={40}
-            className={isSpeaking ? "text-white" : "text-white/30"}
+          <Image
+            src="/officer.jpeg"
+            alt="Agente de imigração"
+            fill
+            className="object-cover object-top"
+            priority
           />
         </div>
       </div>

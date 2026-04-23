@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Volume2, X, CheckCircle, XCircle, RefreshCw } from "lucide-react";
+import { Volume2, X, CheckCircle, XCircle, RefreshCw, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
 import { OfficerAvatar } from "@/components/interview/officer-avatar";
 import { AudioWaveform } from "@/components/interview/audio-waveform";
 import { RecordButton } from "@/components/interview/record-button";
@@ -20,6 +20,7 @@ type Props = {
 
 export function InterviewClient({ sessionId, questions, mode = "simulation" }: Props) {
   const router = useRouter();
+  const [hintOpen, setHintOpen] = useState(false);
   const {
     currentQuestion,
     questionIndex,
@@ -40,6 +41,7 @@ export function InterviewClient({ sessionId, questions, mode = "simulation" }: P
   useEffect(() => {
     if (questionState.phase === "idle") {
       startQuestion();
+      setHintOpen(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questionIndex, questionState.phase]);
@@ -171,6 +173,38 @@ export function InterviewClient({ sessionId, questions, mode = "simulation" }: P
                 }
               </button>
             </>
+          )}
+
+          {/* Dica de resposta — só no modo prática, quando aguardando gravação */}
+          {isPractice && isAwaitingRecord && currentQuestion && (
+            <div className="w-full rounded-xl overflow-hidden" style={{ border: "1px solid rgba(245,158,11,0.2)" }}>
+              <button
+                type="button"
+                onClick={() => setHintOpen((o) => !o)}
+                className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-white/[0.02]"
+                style={{ background: "rgba(245,158,11,0.07)" }}
+              >
+                <Lightbulb size={15} className="text-amber-400 shrink-0" />
+                <span className="text-xs font-medium text-amber-300/80 flex-1">Ver dica de resposta</span>
+                {hintOpen
+                  ? <ChevronUp size={14} className="text-amber-400/50" />
+                  : <ChevronDown size={14} className="text-amber-400/50" />
+                }
+              </button>
+              {hintOpen && (
+                <div className="px-4 pb-4 pt-1 space-y-1.5" style={{ background: "rgba(245,158,11,0.04)" }}>
+                  <p className="text-[10px] font-medium uppercase tracking-widest text-amber-400/40 mb-2">
+                    Respostas aceitas
+                  </p>
+                  {currentQuestion.answers.map((ans, i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <span className="text-amber-400/50 text-xs mt-0.5 shrink-0">•</span>
+                      <p className="text-sm text-white/70 leading-snug">{ans}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           )}
 
           {!isResult && (
