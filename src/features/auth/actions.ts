@@ -72,7 +72,7 @@ export async function resetPassword(formData: { password: string }) {
 
 const onboardingSchema = z.object({
   preferredName: z.string().min(1).max(100),
-  state: z.string().min(2).max(2).regex(/^[A-Z]{2}$/),
+  state: z.string().min(2).max(50),
   examFormat: z.enum(["standard", "2025"]),
 });
 
