@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle, XCircle, Clock, Trophy, RotateCcw } from "lucide-react";
-import { SESSIONS } from "@/features/progress/mock-data";
-import { ResultCard } from "@/components/interview/result-card";
-import { StudyTip } from "@/components/interview/study-tip";
+import { ArrowLeft, CheckCircle, XCircle, Trophy, RotateCcw } from "lucide-react";
+import { getSessionDetail } from "@/features/progress/actions";
+import { QUESTION_PT } from "@/features/civics/question-translations";
 
 type PageProps = {
   params: Promise<{ sessionId: string }>;
@@ -11,13 +10,12 @@ type PageProps = {
 
 export default async function SessionReviewPage({ params }: PageProps) {
   const { sessionId } = await params;
-  const session = SESSIONS.find((s) => s.id === sessionId);
+  const session = await getSessionDetail(sessionId);
 
   if (!session) notFound();
 
   const pct = Math.round((session.score / session.total) * 100);
   const wrongAnswers = session.answers.filter((a) => !a.correct);
-  const tipsToShow = wrongAnswers.filter((a) => a.tip).slice(0, 2);
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 pb-10">
@@ -44,9 +42,7 @@ export default async function SessionReviewPage({ params }: PageProps) {
           <div className="flex items-center gap-4">
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-              style={{
-                background: session.passed ? "rgba(16,185,129,0.15)" : "rgba(239,68,68,0.12)",
-              }}
+              style={{ background: session.passed ? "rgba(16,185,129,0.15)" : "rgba(239,68,68,0.12)" }}
             >
               {session.passed
                 ? <Trophy size={22} className="text-emerald-400" />
@@ -57,7 +53,7 @@ export default async function SessionReviewPage({ params }: PageProps) {
               <p className="text-white font-bold text-lg">
                 {session.passed ? "Aprovado" : "Reprovado"}
               </p>
-              <p className="text-white/40 text-sm mt-0.5">{session.mode} · {session.date}</p>
+              <p className="text-white/40 text-sm mt-0.5">{session.mode} · {session.dateLabel}</p>
             </div>
           </div>
 
@@ -67,11 +63,10 @@ export default async function SessionReviewPage({ params }: PageProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 mt-5 pt-5" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+        <div className="flex items-center gap-6 mt-5 pt-5" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
           {[
-            { label: "Duração",   value: session.duration, icon: <Clock size={12} /> },
-            { label: "Corretas",  value: `${session.score}`, icon: <CheckCircle size={12} className="text-emerald-400" /> },
-            { label: "Erradas",   value: `${session.total - session.score}`, icon: <XCircle size={12} className="text-red-400" /> },
+            { label: "Corretas",  value: `${session.score}`,                    icon: <CheckCircle size={12} className="text-emerald-400" /> },
+            { label: "Erradas",   value: `${session.total - session.score}`,     icon: <XCircle size={12} className="text-red-400" /> },
           ].map((item) => (
             <div key={item.label} className="flex items-center gap-2">
               <span className="text-white/30">{item.icon}</span>
@@ -84,42 +79,80 @@ export default async function SessionReviewPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Study tips */}
-      {tipsToShow.length > 0 && (
-        <div className="space-y-3 animate-fade-up animation-delay-200">
-          <p className="text-[11px] font-medium uppercase tracking-widest text-white/30">
-            Pontos a estudar
+      {/* Weak areas tip */}
+      {wrongAnswers.length > 0 && (
+        <div
+          className="rounded-xl p-4 animate-fade-up animation-delay-150"
+          style={{ background: "rgba(251,146,60,0.06)", border: "1px solid rgba(251,146,60,0.15)" }}
+        >
+          <p className="text-xs font-semibold text-amber-400 mb-1">Pontos a estudar</p>
+          <p className="text-xs text-white/50">
+            {wrongAnswers
+              .map((a) => a.feedback)
+              .filter(Boolean)
+              .slice(0, 2)
+              .join(" · ")}
           </p>
-          <div className="space-y-2">
-            {tipsToShow.map((a, i) => (
-              <StudyTip key={i} tip={a.tip!} category={a.category} />
-            ))}
-          </div>
         </div>
       )}
 
       {/* Per-question review */}
-      {session.answers.length > 0 && (
-        <div className="space-y-3 animate-fade-up animation-delay-300">
+      {session.answers.length > 0 ? (
+        <div className="space-y-3 animate-fade-up animation-delay-200">
           <p className="text-[11px] font-medium uppercase tracking-widest text-white/30">
             Revisão completa
           </p>
           <div className="space-y-2">
             {session.answers.map((answer, i) => (
-              <ResultCard
+              <div
                 key={answer.questionId}
-                questionNumber={i + 1}
-                question={answer.question}
-                userAnswer={answer.userAnswer}
-                correctAnswer={answer.correctAnswer}
-                correct={answer.correct}
-              />
+                className="rounded-xl p-4"
+                style={{
+                  background: answer.correct ? "rgba(16,185,129,0.06)" : "rgba(239,68,68,0.06)",
+                  border: `1px solid ${answer.correct ? "rgba(16,185,129,0.15)" : "rgba(239,68,68,0.15)"}`,
+                }}
+              >
+                <div className="flex items-start gap-3">
+                  <div
+                    className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                    style={{ background: answer.correct ? "rgba(16,185,129,0.15)" : "rgba(239,68,68,0.12)" }}
+                  >
+                    {answer.correct
+                      ? <CheckCircle size={13} className="text-emerald-400" />
+                      : <XCircle size={13} className="text-red-400" />
+                    }
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-white/40 font-mono mb-1">#{i + 1}</p>
+                    <p className="text-sm font-medium text-white leading-snug">{answer.question}</p>
+                    {QUESTION_PT[answer.question] && (
+                      <p className="text-xs text-white/35 mt-0.5">{QUESTION_PT[answer.question]}</p>
+                    )}
+
+                    {answer.transcript && (
+                      <div className="mt-2">
+                        <p className="text-[10px] uppercase tracking-widest text-white/25 mb-1">Sua resposta</p>
+                        <p className="text-xs text-white/60 italic">&ldquo;{answer.transcript}&rdquo;</p>
+                      </div>
+                    )}
+
+                    {!answer.correct && answer.acceptedAnswers.length > 0 && (
+                      <div className="mt-2">
+                        <p className="text-[10px] uppercase tracking-widest text-white/25 mb-1">Resposta aceita</p>
+                        <p className="text-xs text-emerald-400/80">{answer.acceptedAnswers.slice(0, 3).join(" · ")}</p>
+                      </div>
+                    )}
+
+                    {answer.feedback && (
+                      <p className="text-xs text-white/40 mt-2 leading-relaxed">{answer.feedback}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
-      )}
-
-      {session.answers.length === 0 && (
+      ) : (
         <div
           className="rounded-xl p-8 text-center animate-fade-up animation-delay-200"
           style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.07)" }}
@@ -129,7 +162,7 @@ export default async function SessionReviewPage({ params }: PageProps) {
       )}
 
       {/* Actions */}
-      <div className="flex flex-col gap-3 animate-fade-up animation-delay-400">
+      <div className="flex flex-col gap-3 animate-fade-up animation-delay-300">
         <Link
           href="/simulation"
           className="flex items-center justify-center gap-2 h-12 rounded-xl font-semibold text-sm text-white transition-all"

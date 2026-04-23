@@ -35,6 +35,7 @@ export interface ProfileRow {
   name: string | null;
   email: string | null;
   language: string;
+  xp: number | null;
   created_at: string;
   updated_at: string;
 }
