@@ -7,10 +7,16 @@ type RecorderState = "idle" | "recording" | "processing";
 export function useAudioRecorder() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const stateRef = useRef<RecorderState>("idle");
   const [state, setState] = useState<RecorderState>("idle");
 
+  const setRecorderState = (s: RecorderState) => {
+    stateRef.current = s;
+    setState(s);
+  };
+
   const start = useCallback(async (): Promise<void> => {
-    if (state === "recording") return;
+    if (stateRef.current === "recording") return;
 
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
@@ -22,8 +28,8 @@ export function useAudioRecorder() {
     };
 
     recorder.start();
-    setState("recording");
-  }, [state]);
+    setRecorderState("recording");
+  }, []);
 
   const stop = useCallback((): Promise<Blob> => {
     return new Promise((resolve, reject) => {
@@ -33,14 +39,14 @@ export function useAudioRecorder() {
         return;
       }
 
-      setState("processing");
+      setRecorderState("processing");
 
       recorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: "audio/webm" });
         recorder.stream.getTracks().forEach((t) => t.stop());
         mediaRecorderRef.current = null;
         chunksRef.current = [];
-        setState("idle");
+        setRecorderState("idle");
         resolve(blob);
       };
 
