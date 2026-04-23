@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Flame, Zap, Mic, BookOpen, ChevronRight, Award, GraduationCap } from "lucide-react";
 import { AchievementBadge } from "@/components/progress/achievement-badge";
+import { StartModeButton } from "@/components/interview/start-mode-button";
 import { getDashboardStats } from "@/features/progress/actions";
 import type { Achievement } from "@/features/progress/mock-data";
 
@@ -131,47 +132,24 @@ export default async function DashboardPage() {
         <p className="text-[11px] font-medium uppercase tracking-widest text-white/30">Modos de prática</p>
 
         {/* Simulação oficial */}
-        <Link href="/simulation">
-          <div
-            className="group rounded-xl p-5 cursor-pointer transition-all relative overflow-hidden"
-            style={{ background: "linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(6,182,212,0.08) 100%)", border: "1px solid rgba(59,130,246,0.25)" }}
-          >
-            <div
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"
-              style={{ background: "linear-gradient(135deg, rgba(59,130,246,0.2) 0%, rgba(6,182,212,0.12) 100%)" }}
-              aria-hidden="true"
-            />
-            <div className="relative flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: "rgba(59,130,246,0.25)" }}>
-                <Mic size={18} className="text-blue-400" />
-              </div>
-              <div className="flex-1">
-                <p className="font-semibold text-white leading-snug">Simulação Oficial</p>
-                <p className="text-xs text-white/45 mt-0.5">Entrevista completa com oficial virtual</p>
-              </div>
-              <ChevronRight size={16} className="text-blue-400/50 group-hover:text-blue-400 transition-colors" />
-            </div>
-          </div>
-        </Link>
+        <StartModeButton
+          mode="simulation"
+          icon={<Mic size={18} className="text-blue-400" />}
+          iconBg="rgba(59,130,246,0.25)"
+          label="Simulação Oficial"
+          description="Entrevista completa com oficial virtual"
+          style={{ background: "linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(6,182,212,0.08) 100%)", border: "1px solid rgba(59,130,246,0.25)" }}
+        />
 
         {/* Modo prática */}
-        <Link href="/simulation?mode=practice">
-          <div
-            className="group rounded-xl p-5 cursor-pointer transition-all"
-            style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.07)" }}
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: "rgba(16,185,129,0.12)" }}>
-                <GraduationCap size={18} className="text-emerald-400" />
-              </div>
-              <div className="flex-1">
-                <p className="font-semibold text-white leading-snug">Modo Prática</p>
-                <p className="text-xs text-white/45 mt-0.5">Repita até acertar, com dicas de resposta</p>
-              </div>
-              <ChevronRight size={16} className="text-white/20 group-hover:text-white/60 transition-colors" />
-            </div>
-          </div>
-        </Link>
+        <StartModeButton
+          mode="practice"
+          icon={<GraduationCap size={18} className="text-emerald-400" />}
+          iconBg="rgba(16,185,129,0.12)"
+          label="Modo Prática"
+          description="Repita até acertar, com dicas de resposta"
+          style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.07)" }}
+        />
 
         {/* Praticar por tópico */}
         <Link href="/practice">
