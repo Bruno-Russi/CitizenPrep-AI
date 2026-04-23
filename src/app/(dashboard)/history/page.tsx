@@ -62,15 +62,15 @@ export default async function HistoryPage() {
         {[
           { label: "Sessões",         value: totalSessions },
           { label: "Aprovações",      value: passed },
-          { label: "Média de acerto", value: totalSessions ? `${avgScore}%` : "—" },
+          { label: "Média",           value: totalSessions ? `${avgScore}%` : "—" },
         ].map((s, i) => (
           <div
             key={s.label}
-            className="p-5 text-center"
+            className="p-3 sm:p-5 text-center"
             style={{ borderRight: i < 2 ? "1px solid rgba(255,255,255,0.07)" : "none" }}
           >
-            <p className="text-2xl font-bold text-white font-mono">{s.value}</p>
-            <p className="text-[11px] font-medium uppercase tracking-widest text-white/35 mt-1">{s.label}</p>
+            <p className="text-xl sm:text-2xl font-bold text-white font-mono">{s.value}</p>
+            <p className="text-[9px] sm:text-[11px] font-medium uppercase tracking-widest text-white/35 mt-1">{s.label}</p>
           </div>
         ))}
       </div>
@@ -141,8 +141,8 @@ export default async function HistoryPage() {
                     </div>
 
                     <div className="text-right shrink-0">
-                      <p className="text-base font-bold text-white font-mono">{session.score}/{session.total}</p>
-                      <p className="text-xs text-white/35 font-mono">{pct}%</p>
+                      <p className="text-sm sm:text-base font-bold text-white font-mono">{session.score}/{session.total}</p>
+                      <p className="text-[10px] sm:text-xs text-white/35 font-mono">{pct}%</p>
                     </div>
 
                     <ChevronRight size={14} className="text-white/15 group-hover:text-blue-400 transition-colors shrink-0" />

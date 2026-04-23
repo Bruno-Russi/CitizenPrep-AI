@@ -61,7 +61,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           {/* Central hero */}
           <div className="flex-1 flex flex-col justify-center space-y-10 mt-16">
             <div className="space-y-5 animate-fade-up">
-              <h2 className="text-5xl font-bold text-white leading-[1.1] tracking-tight">
+              <h2 className="text-3xl lg:text-5xl font-bold text-white leading-[1.1] tracking-tight">
                 Prepare-se para
                 <br />
                 <span className="gradient-text">sua entrevista</span>
