@@ -116,8 +116,7 @@ export function useInterviewSession(
 
     const nextIndex = index + 1;
     if (nextIndex >= questions.length) {
-      const finalScore = answers.filter((a) => a.evaluation.correct).length + (isCorrect ? 1 : 0);
-      await finalizeSession(sessionId, finalScore, questions.length).catch((e) =>
+      await finalizeSession(sessionId).catch((e) =>
         console.error("[Interview] finalizeSession failed:", e)
       );
       setQuestionState({ phase: "complete" });

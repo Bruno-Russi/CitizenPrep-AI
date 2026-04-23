@@ -30,9 +30,10 @@ Rules:
 - "feedback": one short sentence explaining your decision. Write in Brazilian Portuguese.
 - "tip": if incorrect, one short hint to help the user remember, written in Brazilian Portuguese. If correct, null.`;
 
-  const userPrompt = `Question: "${question}"
-Accepted answers: ${acceptedAnswers.map((a) => `"${a}"`).join(", ")}
-Candidate's answer: "${userAnswer}"`;
+  const sanitizedAnswer = userAnswer.slice(0, 500);
+  const userPrompt = `Question: ${JSON.stringify(question)}
+Accepted answers: ${JSON.stringify(acceptedAnswers)}
+Candidate's answer: ${JSON.stringify(sanitizedAnswer)}`;
 
   try {
     const completion = await openai.chat.completions.create({

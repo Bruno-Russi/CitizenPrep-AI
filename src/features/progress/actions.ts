@@ -16,6 +16,8 @@ function localDateStr(d = new Date()) {
 /** Upserts streak table after a session is completed. */
 export async function updateStreak(userId: string): Promise<void> {
   const supabase = await getSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || user.id !== userId) return;
   const today = localDateStr();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -65,6 +67,8 @@ export async function addXP(
   correctAnswers: number
 ): Promise<void> {
   const supabase = await getSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || user.id !== userId) return;
   const gained = XP_PER_SESSION + correctAnswers * XP_PER_CORRECT;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

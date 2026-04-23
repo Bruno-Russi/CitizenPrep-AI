@@ -104,15 +104,23 @@ export async function saveAnswer(payload: AnswerPayload): Promise<{ error?: stri
   return {};
 }
 
-/** Closes the session with final score. */
+/** Closes the session with final score — recalculates score server-side from session_answers. */
 export async function finalizeSession(
-  sessionId: string,
-  score: number,
-  total: number
+  sessionId: string
 ): Promise<{ error?: string }> {
   const supabase = await getSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
+
+  // Recalculate score server-side — never trust client-supplied values
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: answers } = await (supabase.from("session_answers") as any)
+    .select("correct")
+    .eq("session_id", sessionId);
+
+  const answersArr = (answers ?? []) as { correct: boolean }[];
+  const total = answersArr.length;
+  const score = answersArr.filter((a) => a.correct).length;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase.from("sessions") as any)
