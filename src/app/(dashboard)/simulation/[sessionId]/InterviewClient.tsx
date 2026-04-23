@@ -68,7 +68,7 @@ export function InterviewClient({ sessionId, questions, mode = "simulation" }: P
     <div className="min-h-screen flex flex-col" style={{ background: "#0A0F1E" }}>
       {/* Header */}
       <header
-        className="flex items-center justify-between px-4 py-3 sticky top-0 z-10"
+        className="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 sticky top-0 z-10"
         style={{ background: "#111827", borderBottom: "1px solid rgba(255,255,255,0.07)" }}
       >
         <button

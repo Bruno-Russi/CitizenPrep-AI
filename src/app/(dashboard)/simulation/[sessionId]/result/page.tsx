@@ -54,10 +54,10 @@ export default async function ResultPage({ params }: PageProps) {
           ].map((item) => (
             <div
               key={item.label}
-              className="rounded-xl px-5 py-3 text-center"
+              className="rounded-xl px-4 sm:px-5 py-3 text-center"
               style={{ background: "rgba(255,255,255,0.07)" }}
             >
-              <p className="text-3xl font-bold text-white font-mono">{item.value}</p>
+              <p className="text-2xl sm:text-3xl font-bold text-white font-mono">{item.value}</p>
               <p className="text-xs text-white/40 mt-0.5">{item.label}</p>
             </div>
           ))}

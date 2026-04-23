@@ -38,27 +38,27 @@ export default async function SessionReviewPage({ params }: PageProps) {
             : { background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }
         }
       >
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex items-center gap-3 sm:gap-4">
             <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0"
               style={{ background: session.passed ? "rgba(16,185,129,0.15)" : "rgba(239,68,68,0.12)" }}
             >
               {session.passed
-                ? <Trophy size={22} className="text-emerald-400" />
-                : <XCircle size={22} className="text-red-400" />
+                ? <Trophy size={20} className="text-emerald-400" />
+                : <XCircle size={20} className="text-red-400" />
               }
             </div>
             <div>
-              <p className="text-white font-bold text-lg">
+              <p className="text-white font-bold text-base sm:text-lg">
                 {session.passed ? "Aprovado" : "Reprovado"}
               </p>
-              <p className="text-white/40 text-sm mt-0.5">{session.mode} · {session.dateLabel}</p>
+              <p className="text-white/40 text-xs sm:text-sm mt-0.5">{session.mode} · {session.dateLabel}</p>
             </div>
           </div>
 
           <div className="text-right">
-            <p className="text-3xl font-bold text-white font-mono">{session.score}/{session.total}</p>
+            <p className="text-2xl sm:text-3xl font-bold text-white font-mono">{session.score}/{session.total}</p>
             <p className="text-sm text-white/35 font-mono">{pct}%</p>
           </div>
         </div>

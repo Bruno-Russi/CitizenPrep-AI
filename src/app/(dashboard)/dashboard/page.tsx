@@ -69,12 +69,12 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto space-y-7">
+    <div className="max-w-5xl mx-auto space-y-5 sm:space-y-7">
 
       {/* ── Header ── */}
       <div className="flex items-start justify-between animate-fade-up">
         <div>
-          <h1 className="text-[28px] font-bold text-white leading-tight tracking-tight">
+          <h1 className="text-xl sm:text-[28px] font-bold text-white leading-tight tracking-tight">
             Olá, {stats.name} 👋
           </h1>
           <p className="text-white/45 text-sm mt-1">
@@ -150,7 +150,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Stats Grid ── */}
-      <div className="grid grid-cols-3 gap-3 animate-fade-up animation-delay-200">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3 animate-fade-up animation-delay-200">
         {[
           { label: "Simulações",     value: stats.totalSessions,              icon: Mic,      iconBg: "rgba(59,130,246,0.12)",  iconColor: "#60A5FA" },
           { label: "Taxa de acerto", value: stats.totalSessions ? `${stats.accuracy}%` : "—", icon: TrendingUp, iconBg: "rgba(16,185,129,0.12)", iconColor: "#34D399" },
@@ -158,17 +158,17 @@ export default async function DashboardPage() {
         ].map((s) => (
           <div
             key={s.label}
-            className="rounded-xl p-5"
+            className="rounded-xl p-3 sm:p-5"
             style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.07)" }}
           >
             <div
-              className="w-9 h-9 rounded-lg flex items-center justify-center mb-4"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center mb-3 sm:mb-4"
               style={{ background: s.iconBg }}
             >
-              <s.icon size={16} style={{ color: s.iconColor }} />
+              <s.icon size={15} style={{ color: s.iconColor }} />
             </div>
-            <p className="text-3xl font-bold text-white font-mono">{s.value}</p>
-            <p className="text-[11px] font-medium uppercase tracking-widest text-white/35 mt-1.5">
+            <p className="text-xl sm:text-3xl font-bold text-white font-mono">{s.value}</p>
+            <p className="text-[9px] sm:text-[11px] font-medium uppercase tracking-widest text-white/35 mt-1 sm:mt-1.5">
               {s.label}
             </p>
           </div>
@@ -298,7 +298,7 @@ export default async function DashboardPage() {
           </span>
         </div>
         <div className="px-5 py-5">
-          <div className="grid grid-cols-6 gap-3">
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
             {achievements.map((a) => (
               <AchievementBadge key={a.id} achievement={a} size="sm" />
             ))}
