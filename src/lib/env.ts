@@ -8,21 +8,7 @@ const envSchema = z.object({
 
   // AI / Speech
   OPENAI_API_KEY: z.string().min(1),
-  ELEVENLABS_API_KEY: z.string().min(1),
   ANTHROPIC_API_KEY: z.string().min(1),
-
-  // Payments
-  STRIPE_SECRET_KEY: z.string().min(1),
-  STRIPE_WEBHOOK_SECRET: z.string().min(1),
-  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
-
-  // Email
-  RESEND_API_KEY: z.string().min(1),
-
-  // Observability
-  NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1),
-  NEXT_PUBLIC_POSTHOG_HOST: z.string().default("https://app.posthog.com"),
-  SENTRY_DSN: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
