@@ -15,7 +15,7 @@ export function AudioWaveform({ isActive, variant = "officer" }: AudioWaveformPr
     : "linear-gradient(180deg, #10B981, #06B6D4)";
 
   return (
-    <div className="flex items-center justify-center gap-[3px] h-12">
+    <div className={cn("flex items-center justify-center gap-[3px] h-8 sm:h-12", !isActive && "hidden sm:flex")}>
       {BAR_HEIGHTS.map((height, i) => (
         <div
           key={i}

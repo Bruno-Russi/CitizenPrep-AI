@@ -11,7 +11,7 @@ export function QuestionCard({ question, current, total }: QuestionCardProps) {
 
   return (
     <div
-      className="w-full rounded-xl p-5 space-y-2 text-center"
+      className="w-full rounded-xl p-4 space-y-2 text-center"
       style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.07)" }}
     >
       <p className="text-[10px] font-medium uppercase tracking-widest text-blue-400/70">
