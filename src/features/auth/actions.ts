@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { z } from "zod";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function signUp(formData: { name: string; email: string; password: string }) {
@@ -15,7 +16,7 @@ export async function signUp(formData: { name: string; email: string; password: 
     },
   });
 
-  if (error) return { error: error.message };
+  if (error) return { error: "Não foi possível criar a conta. Verifique seus dados." };
 
   // Se email confirmation está desativado no Supabase, a sessão já vem na resposta.
   // Nesse caso mandamos direto para o onboarding em vez de /confirm.
@@ -69,11 +70,20 @@ export async function resetPassword(formData: { password: string }) {
   return { success: true };
 }
 
+const onboardingSchema = z.object({
+  preferredName: z.string().min(1).max(100),
+  state: z.string().min(2).max(2).regex(/^[A-Z]{2}$/),
+  examFormat: z.enum(["standard", "2025"]),
+});
+
 export async function completeOnboarding(formData: {
   preferredName: string;
   state: string;
   examFormat: "standard" | "2025";
 }) {
+  const parsed = onboardingSchema.safeParse(formData);
+  if (!parsed.success) return { error: "Dados inválidos." };
+
   const supabase = await getSupabaseServerClient();
 
   const { data: { user }, error: userError } = await supabase.auth.getUser();

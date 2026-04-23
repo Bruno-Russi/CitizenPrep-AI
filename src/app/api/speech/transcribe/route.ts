@@ -21,6 +21,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing audio file" }, { status: 400 });
   }
 
+  const MAX_AUDIO_BYTES = 10 * 1024 * 1024; // 10 MB
+  if (audioFile.size > MAX_AUDIO_BYTES) {
+    return NextResponse.json({ error: "Audio too large" }, { status: 413 });
+  }
+
+  const ALLOWED_MIME = ["audio/webm", "audio/ogg", "audio/mp4", "audio/mpeg", "video/webm"];
+  if (audioFile.type && !ALLOWED_MIME.includes(audioFile.type)) {
+    return NextResponse.json({ error: "Unsupported audio format" }, { status: 415 });
+  }
+
   // Whisper requires a supported extension in the filename to detect format.
   // Chrome records webm/opus; we send it as .webm which Whisper accepts.
   // If the browser reports a different mime type (e.g. video/webm), still use .webm.
